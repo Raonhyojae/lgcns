@@ -1344,7 +1344,164 @@
         
         window.print();
     }
+// 기존 스크립트 끝부분에 추가
+
+// 저장소 접근 권한 함수들
+function saveToLocalStorage(key, data) {
+    try {
+        localStorage.setItem(key, JSON.stringify(data));
+        return true;
+    } catch (error) {
+        console.error('로컬 저장소 저장 오류:', error);
+        return false;
+    }
+}
+
+function loadFromLocalStorage(key) {
+    try {
+        const data = localStorage.getItem(key);
+        return data ? JSON.parse(data) : null;
+    } catch (error) {
+        console.error('로컬 저장소 로드 오류:', error);
+        return null;
+    }
+}
+
+function removeFromLocalStorage(key) {
+    try {
+        localStorage.removeItem(key);
+        return true;
+    } catch (error) {
+        console.error('로컬 저장소 삭제 오류:', error);
+        return false;
+    }
+}
+
+function saveToSessionStorage(key, data) {
+    try {
+        sessionStorage.setItem(key, JSON.stringify(data));
+        return true;
+    } catch (error) {
+        console.error('세션 저장소 저장 오류:', error);
+        return false;
+    }
+}
+
+function loadFromSessionStorage(key) {
+    try {
+        const data = sessionStorage.getItem(key);
+        return data ? JSON.parse(data) : null;
+    } catch (error) {
+        console.error('세션 저장소 로드 오류:', error);
+        return null;
+    }
+}
+
+function removeFromSessionStorage(key) {
+    try {
+        sessionStorage.removeItem(key);
+        return true;
+    } catch (error) {
+        console.error('세션 저장소 삭제 오류:', error);
+        return false;
+    }
+}
+
+// 저장소 용량 확인
+function checkStorageQuota() {
+    if ('storage' in navigator && 'estimate' in navigator.storage) {
+        navigator.storage.estimate().then(estimate => {
+            console.log('저장소 사용량:', estimate.usage);
+            console.log('저장소 할당량:', estimate.quota);
+            console.log('사용 가능한 공간:', estimate.quota - estimate.usage);
+        });
+    }
+}
+
+// 저장소 지원 여부 확인
+function isStorageSupported() {
+    try {
+        const testKey = '__storage_test__';
+        localStorage.setItem(testKey, 'test');
+        localStorage.removeItem(testKey);
+        return true;
+    } catch (error) {
+        return false;
+    }
+}
+
+// 자동 저장 기능 (선택적 사용)
+function autoSaveReceipts() {
+    if (receiptsData.length > 0) {
+        const saveData = {
+            receipts: receiptsData,
+            date: document.getElementById('dateInput').value,
+            timestamp: new Date().toISOString()
+        };
+        
+        if (saveToLocalStorage('lgcns_receipts_backup', saveData)) {
+            console.log('인수확인서 데이터가 자동 저장되었습니다.');
+        }
+    }
+}
+
+// 자동 저장된 데이터 복구
+function loadAutoSavedData() {
+    const savedData = loadFromLocalStorage('lgcns_receipts_backup');
+    if (savedData && savedData.receipts) {
+        const confirmRestore = confirm(
+            `자동 저장된 데이터가 있습니다.\n` +
+            `저장 시간: ${new Date(savedData.timestamp).toLocaleString()}\n` +
+            `데이터 개수: ${savedData.receipts.length}개\n\n` +
+            `복구하시겠습니까?`
+        );
+        
+        if (confirmRestore) {
+            receiptsData = savedData.receipts;
+            document.getElementById('dateInput').value = savedData.date;
+            generateReceipts();
+            
+            const status = document.getElementById('status');
+            status.textContent = `🔄 자동 저장된 데이터를 복구했습니다. (${receiptsData.length}개 항목)`;
+            status.style.display = 'block';
+            status.style.background = 'linear-gradient(135deg, #d1ecf1, #bee5eb)';
+            status.style.color = '#0c5460';
+        }
+    }
+}
+
+// 페이지 로드 시 저장소 지원 여부 확인 및 자동 저장 데이터 로드
+document.addEventListener('DOMContentLoaded', function() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('dateInput').value = today;
+    
+    // 캔버스 초기화
+    canvas = document.getElementById('signatureCanvas');
+    ctx = canvas.getContext('2d');
+    setupCanvas();
+    
+    // 저장소 지원 여부 확인
+    if (isStorageSupported()) {
+        console.log('브라우저 저장소가 지원됩니다.');
+        checkStorageQuota();
+        
+        // 자동 저장된 데이터 로드 (페이지 로드 후 3초 뒤)
+        setTimeout(loadAutoSavedData, 3000);
+    } else {
+        console.warn('브라우저 저장소가 지원되지 않습니다.');
+    }
+});
+
+// 인수확인서 생성 시 자동 저장 (기존 generateReceipts 함수 수정 없이 추가)
+const originalGenerateReceipts = generateReceipts;
+generateReceipts = function() {
+    originalGenerateReceipts();
+    // 생성 후 자동 저장
+    setTimeout(autoSaveReceipts, 1000);
+};
+
 </script>
 
+    
 </body>
 </html>
