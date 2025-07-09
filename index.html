@@ -1,783 +1,980 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LG CNS 통합 물품관리 시스템</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-/* 🔥 폰트 문제 해결 - 회수확인서에서 가져온 부분 */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap');
-        
-        body { 
-    font-family: 'Noto Sans KR', 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; 
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    color: white;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LG CNS 통합 물품관리 시스템</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      
+      body { 
+          font-family: 'Malgun Gothic', sans-serif; 
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          min-height: 100vh;
+          color: white;
+      }
+      
+      .container { 
+          max-width: 1200px; 
+          margin: 0 auto; 
+          padding: 20px;
+      }
+
+      h1 { 
+          text-align: center;
+          margin-bottom: 30px; 
+          font-size: 28px; 
+          font-weight: bold;
+          color: #fff;
+          text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+          background: rgba(255,255,255,0.1);
+          padding: 20px;
+          border-radius: 15px;
+          backdrop-filter: blur(10px);
+      }
+
+      .mode-tabs {
+          display: flex;
+          justify-content: center;
+          margin-bottom: 30px;
+          gap: 10px;
+      }
+
+      .mode-tab {
+          padding: 15px 30px;
+          background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+          color: rgba(255,255,255,0.8);
+          border: 2px solid rgba(255,255,255,0.2);
+          border-radius: 30px;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: 700;
+          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          position: relative;
+          overflow: hidden;
+          text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+      }
+
+      .mode-tab:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+          border-color: rgba(255,255,255,0.4);
+      }
+
+      .mode-tab.active {
+          background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+          color: white;
+          border-color: rgba(255,255,255,0.6);
+          box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
+          transform: translateY(-2px);
+      }
+
+      .upload-section { 
+          text-align: center; 
+          margin-bottom: 30px; 
+          padding: 20px; 
+          background: rgba(255,255,255,0.1);
+          border-radius: 15px;
+          backdrop-filter: blur(10px);
+      }
+      
+      .file-input-wrapper { 
+          position: relative; 
+          display: inline-block; 
+          margin-bottom: 15px;
+      }
+      
+      .file-input-wrapper input[type=file] { 
+          position: absolute; 
+          opacity: 0; 
+          width: 100%; 
+          height: 100%; 
+          cursor: pointer; 
+      }
+      
+      .file-input-label { 
+          display: inline-block; 
+          padding: 12px 25px; 
+          background: rgba(255,255,255,0.2);
+          color: white; 
+          border-radius: 25px; 
+          cursor: pointer; 
+          font-size: 16px; 
+          transition: all 0.3s ease;
+          border: 2px solid rgba(255,255,255,0.3);
+      }
+      
+      .file-input-label:hover { 
+          background: rgba(255,255,255,0.3);
+      }
+
+      .upload-info {
+          margin-top: 10px;
+          font-size: 14px;
+          color: rgba(255,255,255,0.8);
+      }
+
+      .file-rules {
+          margin-top: 15px;
+          padding: 15px;
+          background: rgba(255,255,255,0.1);
+          border-radius: 10px;
+          border-left: 4px solid #ffc107;
+          text-align: left;
+          font-size: 13px;
+          line-height: 1.6;
+      }
+
+      .file-rules h4 {
+          color: #ffc107;
+          margin-bottom: 8px;
+          font-size: 14px;
+      }
+
+      .file-rules ul {
+          list-style-type: none;
+          padding-left: 0;
+      }
+
+      .file-rules li {
+          margin-bottom: 5px;
+          padding-left: 20px;
+          position: relative;
+      }
+
+      .file-rules li:before {
+          content: "•";
+          color: #ffc107;
+          position: absolute;
+          left: 0;
+      }
+
+      .controls { 
+          display: flex; 
+          justify-content: center; 
+          align-items: center; 
+          gap: 20px; 
+          margin-bottom: 25px; 
+          flex-wrap: wrap;
+      }
+      
+      .date-display {
+          padding: 15px 25px;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          border-radius: 30px;
+          font-size: 16px;
+          font-weight: 700;
+          backdrop-filter: blur(10px);
+          border: 3px solid rgba(255,255,255,0.3);
+          box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+          text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+      }
+
+      .btn { 
+          padding: 15px 30px; 
+          border: none; 
+          border-radius: 30px; 
+          cursor: pointer; 
+          font-size: 16px; 
+          font-weight: 700;
+          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          backdrop-filter: blur(10px);
+          position: relative;
+          overflow: hidden;
+          text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+          border: 2px solid rgba(255,255,255,0.3);
+      }
+
+      .btn-primary { 
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white; 
+          box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+      }
+
+      .btn-secondary { 
+          background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+          color: white; 
+          box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
+      }
+
+      .btn:hover {
+          transform: translateY(-4px) scale(1.05);
+          box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+      }
+
+      .receipt-wrapper {
+          display: none;
+          background: white;
+          color: black;
+          padding: 0px;
+          margin-top: 30px;
+          border-radius: 15px;
+          width: 100%;
+      }
+
+      .receipt-wrapper.show {
+          display: block;
+      }
+
+      .receipt-page { 
+          width: 100%; 
+          margin: 20px auto; 
+          padding: 15mm; 
+          background: white; 
+          box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+          border-radius: 15px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+      }
+
+      .receipt { 
+          border: 2px solid #333; 
+          padding: 20px; 
+          margin-bottom: 5mm;
+          border-radius: 8px;
+          background: #fafafa;
+          width: 100%;
+          max-width: none;
+      }
+
+      .receipt h2 { 
+          text-align: center; 
+          margin-bottom: 25px; 
+          font-size: 24px; 
+          color: #333;
+          border-bottom: 3px solid #667eea; 
+          padding-bottom: 12px; 
+          font-weight: 700;
+      }
+
+      .receipt-info { 
+          margin-bottom: 30px; 
+      }
+      
+      .cut-line::before { 
+          content: "✂️ 절취선"; 
+          position: absolute; 
+          left: 50%; 
+          top: -12px; 
+          transform: translateX(-50%); 
+          background: white; 
+          padding: 0 20px; 
+          color: #667eea;
+          font-weight: 600;
+          font-size: 14px;
+      }
+
+      .toast {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          padding: 15px 20px;
+          background: #28a745;
+          color: white;
+          border-radius: 8px;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+          z-index: 10000;
+          opacity: 0;
+          transform: translateX(100%);
+          transition: all 0.3s ease;
+          font-weight: 600;
+          max-width: 350px;
+          word-wrap: break-word;
+      }
+
+      .toast.show {
+          opacity: 1;
+          transform: translateX(0);
+      }
+
+      .toast.error {
+          background: #dc3545;
+      }
+
+      @media print {
+    * {
+        -webkit-print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+    
+    body {
+        background: white !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-family: 'Malgun Gothic', sans-serif !important;
+    }
+    
+    .container > *:not(.receipt-wrapper) {
+        display: none !important;
+    }
+    
+    .receipt-wrapper {
+        display: block !important;
+        background: white !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+    
+    .receipt-page {
+        width: 210mm !important;
+        height: 297mm !important;
+        margin: 0 !important;
+        padding: 15mm !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        background: white !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: flex-start !important;
+        page-break-after: always !important;
+        page-break-inside: avoid !important;
+    }
+
+    .receipt-page:last-child,
+    .receipt-page.last-page {
+        page-break-after: avoid !important;
+    }
+    
+    .receipt {
+        border: 2px solid #333 !important;
+        padding: 15px !important;
+        margin-bottom: 8mm !important;
+        border-radius: 8px !important;
+        background: #fafafa !important;
+        width: 100% !important;
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+    
+    .receipt h2 {
+        text-align: center !important;
+        margin-bottom: 20px !important;
+        font-size: 20px !important;
+        color: #333 !important;
+        border-bottom: 3px solid #667eea !important;
+        padding-bottom: 10px !important;
+        font-weight: 700 !important;
+    }
+    
+    .receipt-info {
+        margin-bottom: 25px !important;
+        flex: 1 !important;
+    }
+    
+    .receipt-info p {
+        margin-bottom: 12px !important;
+        font-size: 14px !important;
+        display: flex !important;
+        align-items: flex-start !important;
+        gap: 8px !important;
+    }
+    
+    .receipt-info strong {
+        display: inline-block !important;
+        width: 140px !important;
+        color: #000000 !important;
+        font-weight: 900 !important;
+        background: #e8f4f8 !important;
+        padding: 12px 6px !important;
+        border-radius: 6px !important;
+        flex-shrink: 0 !important;
+        text-align: center !important;
+        border: 1px solid #d1ecf1 !important;
+        font-size: 14px !important;
+    }
+    
+    .receipt-info .value {
+        flex: 1 !important;
+        padding: 10px 20px !important;
+        background: white !important;
+        border: 2px solid #e9ecef !important;
+        border-radius: 6px !important;
+        min-height: 12px !important;
+        line-height: 1.4 !important;
+        display: flex !important;
+        align-items: center !important;
+        font-size: 14px !important;
+        font-weight: 700 !important;
+        color: #000000 !important;
+    }
+    
+    .signature-section {
+        margin-top: 20px !important;
+        border-top: 3px solid #667eea !important;
+        padding-top: 20px !important;
+    }
+    
+    .signature-row {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        margin-bottom: 15px !important;
+        gap: 20px !important;
+        flex-wrap: nowrap !important;
+    }
+    
+    .signature-group {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 8px !important;
+        flex: none !important;
+        white-space: nowrap !important;
+    }
+    
+    .signature-title {
+        font-size: 16px !important;
+        font-weight: 600 !important;
+        color: #333 !important;
+        white-space: nowrap !important;
+        min-width: 60px !important;
+    }
+    
+    .signature-line {
+        border-bottom: 2px solid #333 !important;
+        width: 120px !important;
+        height: 25px !important;
+        margin-left: 8px !important;
+        flex-shrink: 0 !important;
+    }
+    
+    .cut-line {
+        border-top: 2px dashed #667eea !important;
+        margin: 8mm auto !important;
+        position: relative !important;
+        text-align: center !important;
+        width: 100% !important;
+    }
+    
+    .cut-line::before {
+        content: "✂️ 절취선" !important;
+        position: absolute !important;
+        left: 50% !important;
+        top: -10px !important;
+        transform: translateX(-50%) !important;
+        background: white !important;
+        padding: 0 15px !important;
+        color: #667eea !important;
+        font-weight: 600 !important;
+        font-size: 12px !important;
+    }
 }
-        
-        .container { 
-            max-width: 800px; 
-            margin: 0 auto; 
-            padding: 20px;
-        }
-
-        /* 🌟 화려한 타이틀 - 회수확인서에서 가져온 스타일 */
-h1 { 
-    text-align: center;
-    margin-bottom: 30px; 
-    font-size: 32px; 
-    font-weight: 800;
-    color: #fff;
-    text-shadow: 
-        2px 2px 4px rgba(0,0,0,0.5),
-        4px 4px 8px rgba(0,0,0,0.3),
-        6px 6px 12px rgba(0,0,0,0.2),
-        0 0 10px rgba(255,255,255,0.3),
-        0 0 20px rgba(255,255,255,0.2);
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 25px;
-    border-radius: 15px;
-    position: relative;
-    box-shadow: 
-        0 8px 32px rgba(0,0,0,0.3),
-        inset 0 2px 0 rgba(255,255,255,0.2),
-        inset 0 -2px 0 rgba(0,0,0,0.2);
+ 
+  
+    .receipt-info p {
+        margin-bottom: 12px !important;
+        font-size: 14px !important;
+        display: flex !important;
+        align-items: flex-start !important;
+        gap: 8px !important;
+    }
+    
+    .receipt-info strong {
+        display: inline-block !important;
+        width: 140px !important;
+        color: #000000 !important;
+        font-weight: 900 !important;
+        background: #e8f4f8 !important;
+        padding: 12px 6px !important;
+        border-radius: 6px !important;
+        flex-shrink: 0 !important;
+        text-align: center !important;
+        border: 1px solid #d1ecf1 !important;
+        font-size: 14px !important;
+    }
+    
+    .receipt-info .value {
+        flex: 1 !important;
+        padding: 10px 20px !important;
+        background: white !important;
+        border: 2px solid #e9ecef !important;
+        border-radius: 6px !important;
+        min-height: 12px !important;
+        line-height: 1.4 !important;
+        display: flex !important;
+        align-items: center !important;
+        font-size: 14px !important;
+        font-weight: 700 !important;
+        color: #000000 !important;
+    }
+    
+    .signature-section {
+        margin-top: 20px !important;
+        border-top: 3px solid #667eea !important;
+        padding-top: 20px !important;
+    }
+    
+    .signature-row {
+        display: flex !important;
+        justify-content: left !important;
+        align-items: center !important;
+        margin-bottom: 15px !important;
+        gap: 15px !important;
+    }
+    
+    .signature-row[style*="center"] {
+        justify-content: center !important;
+    }
+    
+    .signature-group {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 8px !important;
+    }
+          
+    .signature-line {
+        border-bottom: 2px solid #333 !important;
+        width: 120px !important;
+        height: 25px !important;
+        margin-left: 8px !important;
+    }
+    
+    .cut-line {
+        border-top: 2px dashed #667eea !important;
+        margin: 8mm auto !important;
+        position: relative !important;
+        text-align: center !important;
+        width: 100% !important;
+    }
+    
+    .cut-line::before {
+        content: "✂️ 절취선" !important;
+        position: absolute !important;
+        left: 50% !important;
+        top: -10px !important;
+        transform: translateX(-50%) !important;
+        background: white !important;
+        padding: 0 15px !important;
+        color: #667eea !important;
+        font-weight: 600 !important;
+        font-size: 12px !important;
+    }
+    
+    /* 페이지 여백 설정 */
+    @page {
+        size: A4 !important;
+        margin: 10mm !important;
+    }
 }
-
-/* 🔮 크리스탈 샤인 애니메이션 효과 */
-h1::before {
-    content: '';
-    position: absolute;
-    top: 10%;
-    left: 10%;
-    width: 80%;
-    height: 80%;
-    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
-    border-radius: 15px;
-    animation: crystal-shine 3s ease-in-out infinite;
-}
-
-@keyframes crystal-shine {
-    0%, 100% { opacity: 0; }
-    50% { opacity: 1; }
-}
-
-
-        .mode-tabs {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 30px;
-            gap: 10px;
-        }
-
-        .mode-tab {
-            padding: 12px 25px;
-            background: rgba(255,255,255,0.1);
-            color: rgba(255,255,255,0.8);
-            border: 2px solid rgba(255,255,255,0.2);
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .mode-tab.active {
-            background: rgba(255,255,255,0.3);
-            color: white;
-            border-color: rgba(255,255,255,0.5);
-        }
-
-        .upload-section { 
-            text-align: center; 
-            margin-bottom: 30px; 
-            padding: 20px; 
-            background: rgba(255,255,255,0.1);
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-        }
-        
-        .file-input-wrapper { 
-            position: relative; 
-            display: inline-block; 
-            margin-bottom: 15px;
-        }
-        
-        .file-input-wrapper input[type=file] { 
-            position: absolute; 
-            opacity: 0; 
-            width: 100%; 
-            height: 100%; 
-            cursor: pointer; 
-        }
-        
-        .file-input-label { 
-            display: inline-block; 
-            padding: 12px 25px; 
-            background: rgba(255,255,255,0.2);
-            color: white; 
-            border-radius: 25px; 
-            cursor: pointer; 
-            font-size: 16px; 
-            transition: all 0.3s ease;
-            border: 2px solid rgba(255,255,255,0.3);
-        }
-        
-        .file-input-label:hover { 
-            background: rgba(255,255,255,0.3);
-        }
-
-        .upload-info {
-            margin-top: 10px;
-            font-size: 14px;
-            color: rgba(255,255,255,0.8);
-        }
-
-        .file-rules {
-            margin-top: 15px;
-            padding: 15px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
-            border-left: 4px solid #ffc107;
-            text-align: left;
-            font-size: 13px;
-            line-height: 1.6;
-        }
-
-        .file-rules h4 {
-            color: #ffc107;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        .file-rules ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-
-        .file-rules li {
-            margin-bottom: 5px;
-            padding-left: 20px;
-            position: relative;
-        }
-
-        .file-rules li:before {
-            content: "•";
-            color: #ffc107;
-            position: absolute;
-            left: 0;
-        }
-
-        .barcode-section {
-            display: none;
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-        }
-
-        .barcode-section.show {
-            display: block;
-        }
-
-        .controls { 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            gap: 15px; 
-            margin-bottom: 25px; 
-            flex-wrap: wrap;
-        }
-        
-        .date-display {
-            padding: 12px 20px;
-            background: rgba(40, 167, 69, 0.8);
-            color: white;
-            border-radius: 25px;
-            font-size: 16px;
-            font-weight: 600;
-            backdrop-filter: blur(10px);
-        }
-
-        .btn { 
-            padding: 12px 25px; 
-            border: none; 
-            border-radius: 25px; 
-            cursor: pointer; 
-            font-size: 14px; 
-            font-weight: 600;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .btn-primary { 
-            background: rgba(102, 126, 234, 0.8); 
-            color: white; 
-        }
-
-        .btn-secondary { 
-            background: rgba(168, 237, 234, 0.8); 
-            color: #333; 
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-        }
-
-        .receipt-wrapper {
-            display: none;
-            background: white;
-            color: black;
-            padding: 20px;
-            margin-top: 30px;
-            border-radius: 15px;
-        }
-
-        .receipt-wrapper.show {
-            display: block;
-        }
-
-        .receipt { 
-            border: 2px solid #333; 
-            padding: 20px; 
-            margin-bottom: 20px;
-            border-radius: 8px;
-            background: #fafafa;
-        }
-
-        .receipt h2 { 
-            text-align: center; 
-            margin-bottom: 20px; 
-            font-size: 24px; 
-            color: #333;
-            border-bottom: 3px solid #667eea; 
-            padding-bottom: 10px; 
-        }
-
-        .receipt-info p { 
-            margin-bottom: 10px; 
-            font-size: 16px; 
-            display: flex;
-            gap: 10px;
-        }
-
-        .receipt-info strong { 
-            display: inline-block;
-            width: 120px; 
-            color: #000;
-            font-weight: bold;
-            background: #e8f4f8;
-            padding: 8px;
-            border-radius: 4px;
-            text-align: center;
-        }
-
-        .receipt-info .value { 
-            flex: 1; 
-            padding: 8px; 
-            background: white; 
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-weight: bold;
-        }
-
-        .signature-section { 
-            margin-top: 30px; 
-            border-top: 2px solid #667eea; 
-            padding-top: 20px; 
-        }
-
-        .signature-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-
-        .signature-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .signature-title {
-            font-size: 16px;
-            font-weight: 600;
-            min-width: 60px;
-        }
-
-        .signature-box {
-            height: 60px;
-            width: 150px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background: white;
-        }
-
-        .toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 20px;
-            background: #28a745;
-            color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 10000;
-            opacity: 0;
-            transform: translateX(100%);
-            transition: all 0.3s ease;
-            font-weight: 600;
-            max-width: 350px;
-            word-wrap: break-word;
-        }
-
-        .toast.show {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .toast.error {
-            background: #dc3545;
-        }
-
-        .toast.warning {
-            background: #ffc107;
-            color: #333;
-        }
-        /* 🎨 eSTREAM 로고 스타일 - 버튼 아래 위치 */
-        .logo-section {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 20px 0;
-            padding: 15px 25px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-        }
-
-        .logo-section:hover {
-            background: rgba(255,255,255,0.2);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-        }
-
-        .logo-section img {
-            height: 40px;
-            width: auto;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-        }
-
-        /* 인쇄 시 로고 숨김 */
-        @media print {
-            .logo-section {
-                display: none !important;
-            }
-        }
-
-        @media print {
-            .container > *:not(.receipt-wrapper) {
-                display: none !important;
-            }
-            
-            .receipt-wrapper {
-                display: block !important;
-                background: white !important;
-                margin: 0 !important;
-                padding: 0 !important;
-            }
-            
-            .receipt {
-                page-break-after: always;
-                margin: 0;
-                border: 1px solid #000;
-            }
-        }
-    </style>
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🏢 LG CNS 통합 물품관리 시스템</h1>
-        
-        <div class="mode-tabs">
-            <div class="mode-tab active" data-mode="receipt">📤 회수확인서</div>
-            <div class="mode-tab" data-mode="delivery">📥 인수확인서</div>
-        </div>
+  <div class="container">
+      <h1>🏢 LG CNS 통합 물품관리 시스템</h1>
+      
+      <div class="mode-tabs">
+          <div class="mode-tab active" data-mode="receipt">📤 회수확인서</div>
+          <div class="mode-tab" data-mode="delivery">📥 인수확인서</div>
+      </div>
 
-        <div class="upload-section">
-            <h3>📊 엑셀 파일 업로드</h3>
-            <div class="file-input-wrapper">
-                <input type="file" id="fileInput" accept=".xlsx,.xls" />
-                <label for="fileInput" class="file-input-label">📁 파일 선택</label>
-            </div>
-            <div class="upload-info">엑셀 파일을 선택하면 자동으로 처리됩니다.</div>
+      <div class="upload-section">
+          <h3>📊 엑셀 파일 업로드</h3>
+          <div class="file-input-wrapper">
+              <input type="file" id="fileInput" accept=".xlsx,.xls" />
+              <label for="fileInput" class="file-input-label">📁 파일 선택</label>
+          </div>
+          <div class="upload-info">엑셀 파일을 선택하면 자동으로 처리됩니다.</div>
+          
+          <div class="file-rules">
+              <h4>📋 파일 업로드 규칙</h4>
+              <ul id="fileRules">
+                  <li>회수확인서 모드: "회수" 관련 파일만 업로드 가능</li>
+                  <li>인수확인서 모드: "납품" 또는 "인수" 관련 파일만 업로드 가능</li>
+                  <li>파일명에 해당 키워드가 포함되어야 합니다</li>
+              </ul>
+          </div>
+      </div>
+
+      <div class="controls">
+          <div class="date-display">
+              <span>📅 </span>
+              <span id="currentDate">로딩중...</span>
+          </div>
+          <button class="btn btn-primary" onclick="generateReceipt()">📋 확인서 생성</button>
+          <button class="btn btn-secondary" onclick="printReceipt()">🖨️ 인쇄하기</button>
+      </div>
+
+      <div class="receipt-wrapper" id="receiptWrapper">
+          <div id="receiptContainer"></div>
+      </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+      // 전역 변수
+      let currentMode = 'receipt';
+      let excelData = [];
+
+      // 파일명 검증 규칙
+      const fileValidationRules = {
+          receipt: {
+              allowed: ['회수', '회수리스트', '회수목록', '반납'],
+              blocked: ['납품', '자산납품', '인수', '배송', '전달'],
+              message: '회수확인서 모드에서는 "회수" 관련 파일만 업로드할 수 있습니다.'
+          },
+          delivery: {
+              allowed: ['납품', '자산납품', '인수', '배송', '전달', '인수리스트'],
+              blocked: ['회수', '회수리스트', '반납'],
+              message: '인수확인서 모드에서는 "납품" 또는 "인수" 관련 파일만 업로드할 수 있습니다.'
+          }
+      };
+
+      // DOM이 로드되면 실행
+      document.addEventListener('DOMContentLoaded', function() {
+          console.log('🚀 시스템 초기화 시작');
+          
+          // 날짜 업데이트 시작
+          updateCurrentDate();
+          setInterval(updateCurrentDate, 1000);
+          
+          // 파일 규칙 업데이트
+          updateFileRules();
+          
+          // 이벤트 리스너 등록
+          setupEventListeners();
+          
+          // 초기화 완료 알림
+          setTimeout(() => {
+              showToast('✅ 시스템이 준비되었습니다!');
+          }, 500);
+      });
+
+      // 이벤트 리스너 설정
+      function setupEventListeners() {
+          // 모드 탭 클릭 이벤트
+          document.querySelectorAll('.mode-tab').forEach(tab => {
+              tab.addEventListener('click', function() {
+                  const mode = this.getAttribute('data-mode');
+                  switchMode(mode);
+              });
+          });
+
+          // 파일 업로드 이벤트
+          const fileInput = document.getElementById('fileInput');
+          fileInput.addEventListener('change', handleFileUpload);
+          
+          console.log('✅ 이벤트 리스너 등록 완료');
+      }
+
+      // 현재 날짜 업데이트
+      function updateCurrentDate() {
+          const now = new Date();
+          const year = now.getFullYear();
+          const month = String(now.getMonth() + 1).padStart(2, '0');
+          const day = String(now.getDate()).padStart(2, '0');
+          const hours = String(now.getHours()).padStart(2, '0');
+          const minutes = String(now.getMinutes()).padStart(2, '0');
+          const seconds = String(now.getSeconds()).padStart(2, '0');
+          
+          const dateString = `${year}년 ${month}월 ${day}일 ${hours}:${minutes}:${seconds}`;
+          
+          const dateElement = document.getElementById('currentDate');
+          if (dateElement) {
+              dateElement.textContent = dateString;
+          }
+      }
+
+      // 파일 규칙 업데이트
+      function updateFileRules() {
+          const rulesElement = document.getElementById('fileRules');
+          const rules = fileValidationRules[currentMode];
+          
+          rulesElement.innerHTML = `
+              <li><strong>${currentMode === 'receipt' ? '회수확인서' : '인수확인서'} 모드</strong></li>
+              <li>허용 키워드: ${rules.allowed.join(', ')}</li>
+              <li>차단 키워드: ${rules.blocked.join(', ')}</li>
+              <li>파일명에 허용 키워드가 포함되어야 합니다</li>
+          `;
+      }
+
+      // 파일명 검증
+      function validateFileName(fileName) {
+          const rules = fileValidationRules[currentMode];
+          const lowerFileName = fileName.toLowerCase();
+          
+          // 차단된 키워드 확인
+          for (let blocked of rules.blocked) {
+              if (lowerFileName.includes(blocked.toLowerCase())) {
+                  return {
+                      valid: false,
+                      message: `❌ "${blocked}" 키워드가 포함된 파일은 현재 모드에서 업로드할 수 없습니다.`
+                  };
+              }
+          }
+          
+          // 허용된 키워드 확인
+          let hasAllowedKeyword = false;
+          for (let allowed of rules.allowed) {
+              if (lowerFileName.includes(allowed.toLowerCase())) {
+                  hasAllowedKeyword = true;
+                  break;
+              }
+          }
+          
+          if (!hasAllowedKeyword) {
+              return {
+                  valid: false,
+                  message: `❌ 허용된 키워드(${rules.allowed.join(', ')})가 파일명에 포함되지 않았습니다.`
+              };
+          }
+          
+          return { valid: true, message: '✅ 파일명 검증 통과' };
+      }
+
+      // 모드 전환
+      function switchMode(mode) {
+          console.log('🔄 모드 전환:', mode);
+          currentMode = mode;
+          
+          // 탭 활성화 상태 변경
+          document.querySelectorAll('.mode-tab').forEach(tab => {
+              tab.classList.remove('active');
+          });
+          document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+
+          // 파일 규칙 업데이트
+          updateFileRules();
+
+          // 기존 데이터 초기화
+          excelData = [];
+          document.getElementById('receiptWrapper').classList.remove('show');
+          document.getElementById('fileInput').value = '';
+
+          const modeText = mode === 'receipt' ? '회수확인서' : '인수확인서';
+          showToast(`${modeText} 모드로 전환되었습니다.`);
+      }
+
+      // 파일 업로드 처리
+      function handleFileUpload(event) {
+          console.log('📁 파일 업로드 시작');
+          
+          const file = event.target.files[0];
+          if (!file) return;
+
+          console.log('선택된 파일:', file.name);
+          
+          // 파일 타입 검증
+          if (!file.name.match(/\.(xlsx|xls)$/i)) {
+              showToast('❌ 엑셀 파일(.xlsx, .xls)만 업로드 가능합니다.', 'error');
+              event.target.value = '';
+              return;
+          }
+          
+          // 파일명 검증
+          const validation = validateFileName(file.name);
+          if (!validation.valid) {
+              showToast(validation.message, 'error');
+              event.target.value = '';
+              return;
+          }
+
+          showToast('📄 파일 검증 완료. 읽는 중...', 'success');
+
+          const reader = new FileReader();
+          
+          reader.onload = function(e) {
+              try {
+                  const data = new Uint8Array(e.target.result);
+                  const workbook = XLSX.read(data, { type: 'array' });
+                  const firstSheetName = workbook.SheetNames[0];
+                  const worksheet = workbook.Sheets[firstSheetName];
+                  
+                  excelData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                  
+                  if (excelData.length > 1) {
+                      const dataRows = excelData.length - 1;
+                      showToast(`✅ 파일 로드 성공! ${dataRows}개 항목`);
+                  } else {
+                      showToast('❌ 데이터가 없습니다.', 'error');
+                  }
+                  
+              } catch (error) {
+                  console.error('파일 파싱 오류:', error);
+                  showToast('❌ 파일 읽기 오류', 'error');
+              }
+          };
+          
+          reader.readAsArrayBuffer(file);
+      }
+
+// 확인서 생성
+function generateReceipt() {
+    if (excelData.length === 0) {
+        showToast('❌ 먼저 엑셀 파일을 업로드해주세요.', 'error');
+        return;
+    }
+
+    const receiptWrapper = document.getElementById('receiptWrapper');
+    const receiptContainer = document.getElementById('receiptContainer');
+    
+    let receiptsHTML = '';
+    const currentDate = new Date().toLocaleDateString('ko-KR');
+    
+    // 회수코드별로 데이터 그룹화
+    const groupedData = {};
+    
+    // 6행부터 데이터 시작 (0-based index로 5부터)
+    for (let i = 5; i < excelData.length; i++) {
+        const row = excelData[i];
+        if (row && row.length > 0) {
+            // 실제 자산 데이터인지 확인 (자산번호가 숫자로 시작하는지 체크)
+            const assetNumber = row[0] ? String(row[0]).trim() : '';
             
-            <div class="file-rules">
-                <h4>📋 파일 업로드 규칙</h4>
-                <ul id="fileRules">
-                    <li>회수확인서 모드: "회수" 관련 파일만 업로드 가능</li>
-                    <li>인수확인서 모드: "납품" 또는 "인수" 관련 파일만 업로드 가능</li>
-                    <li>파일명에 해당 키워드가 포함되어야 합니다</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="barcode-section" id="barcodeSection">
-            <h3>📷 바코드 스캐너 (인수확인서 모드)</h3>
-            <p>인수확인서 모드에서만 사용 가능합니다.</p>
-        </div>
-
-        <div class="controls">
-            <div class="date-display">
-                <span>📅 </span>
-                <span id="currentDate">로딩중...</span>
-            </div>
-            <button class="btn btn-primary" onclick="generateReceipt()">📋 확인서 생성</button>
-            <button class="btn btn-secondary" onclick="printReceipt()">🖨️ 인쇄하기</button>
-        </div>
-        <!-- 🎨 eSTREAM 로고 -->
-        <div class="logo-section">
-            <img src="./images/estream_logo.png" alt="eSTREAM Logo" style="width: 200px;" style="height: 300;">
-        </div>
-
-        <div class="receipt-wrapper" id="receiptWrapper">
-            <div id="receiptContainer"></div>
-        </div>
-        <div class="receipt-wrapper" id="receiptWrapper">
-            <div id="receiptContainer"></div>
-        </div>
-    </div>
-
-    <div class="toast" id="toast"></div>
-
-    <script>
-        // 전역 변수
-        let currentMode = 'receipt';
-        let excelData = [];
-
-        // 파일명 검증 규칙
-        const fileValidationRules = {
-            receipt: {
-                allowed: ['회수', '회수리스트', '회수목록', '반납'],
-                blocked: ['납품', '자산납품', '인수', '배송', '전달'],
-                message: '회수확인서 모드에서는 "회수" 관련 파일만 업로드할 수 있습니다.'
-            },
-            delivery: {
-                allowed: ['납품', '자산납품', '인수', '배송', '전달', '인수리스트'],
-                blocked: ['회수', '회수리스트', '반납'],
-                message: '인수확인서 모드에서는 "납품" 또는 "인수" 관련 파일만 업로드할 수 있습니다.'
+            // 자산번호가 숫자로 시작하지 않으면 건너뛰기 (지역명 등 제외)
+            if (!assetNumber || !/^\d/.test(assetNumber)) {
+                continue;
             }
-        };
-
-        // 페이지 로드 시 초기화
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('페이지 로드 완료');
-            updateCurrentDate();
-            setInterval(updateCurrentDate, 60000);
-            setupEventListeners();
-            updateFileRules();
-            showToast('시스템이 준비되었습니다.');
-        });
-
-        // 이벤트 리스너 설정
-        function setupEventListeners() {
-            console.log('이벤트 리스너 설정 중...');
             
-            // 모드 탭 클릭
-            document.querySelectorAll('.mode-tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    switchMode(this.dataset.mode);
-                });
-            });
-
-            // 파일 업로드
-            const fileInput = document.getElementById('fileInput');
-            if (fileInput) {
-                fileInput.addEventListener('change', handleFileUpload);
-                console.log('파일 입력 이벤트 리스너 등록 완료');
-            }
-        }
-
-        // 현재 날짜 업데이트 (시간 제외)
-        function updateCurrentDate() {
-            try {
-                const now = new Date();
-                const dateString = now.getFullYear() + '년 ' + 
-                                 (now.getMonth() + 1).toString().padStart(2, '0') + '월 ' +
-                                 now.getDate().toString().padStart(2, '0') + '일';
-                
-                const dateElement = document.getElementById('currentDate');
-                if (dateElement) {
-                    dateElement.textContent = dateString;
-                }
-            } catch (error) {
-                console.error('날짜 업데이트 오류:', error);
-            }
-        }
-
-        // 파일 규칙 업데이트
-        function updateFileRules() {
-            const rulesElement = document.getElementById('fileRules');
-            const rules = fileValidationRules[currentMode];
-            
-            rulesElement.innerHTML = `
-                <li><strong>${currentMode === 'receipt' ? '회수확인서' : '인수확인서'} 모드</strong></li>
-                <li>허용 키워드: ${rules.allowed.join(', ')}</li>
-                <li>차단 키워드: ${rules.blocked.join(', ')}</li>
-                <li>파일명에 허용 키워드가 포함되어야 합니다</li>
-            `;
-        }
-
-        // 파일명 검증 함수
-        function validateFileName(fileName) {
-            const rules = fileValidationRules[currentMode];
-            const lowerFileName = fileName.toLowerCase();
-            
-            // 차단된 키워드 확인
-            for (let blocked of rules.blocked) {
-                if (lowerFileName.includes(blocked.toLowerCase())) {
-                    return {
-                        valid: false,
-                        message: `❌ 파일 업로드 거부: "${blocked}" 키워드가 포함된 파일은 현재 모드에서 업로드할 수 없습니다.\n\n${rules.message}`
-                    };
-                }
+            // 수거번호가 없으면 건너뛰기
+            const collectionNumber = row[1] ? String(row[1]).trim() : '';
+            if (!collectionNumber) {
+                continue;
             }
             
-            // 허용된 키워드 확인
-            let hasAllowedKeyword = false;
-            for (let allowed of rules.allowed) {
-                if (lowerFileName.includes(allowed.toLowerCase())) {
-                    hasAllowedKeyword = true;
-                    break;
-                }
-            }
+            // 데이터 추출
+            const assetType = row[2] ? String(row[2]).trim() : '';  // C열 - 자산분류
+            const modelName = row[3] ? String(row[3]).trim() : '';  // D열 - 모델명
+            const contactPerson = row[9] ? String(row[9]).trim() : '';  // J열 - 연락드릴 분
+            const phoneNumber = row[10] ? String(row[10]).trim() : '';  // K열 - 전화번호
             
-            if (!hasAllowedKeyword) {
-                return {
-                    valid: false,
-                    message: `❌ 파일 업로드 거부: 허용된 키워드가 파일명에 포함되지 않았습니다.\n\n허용 키워드: ${rules.allowed.join(', ')}\n\n${rules.message}`
+            // 회수코드별로 그룹화
+            if (!groupedData[collectionNumber]) {
+                groupedData[collectionNumber] = {
+                    assetNumbers: [],
+                    assetItems: [],
+                    contactPerson: contactPerson,
+                    phoneNumber: phoneNumber
                 };
             }
             
-            return {
-                valid: true,
-                message: '✅ 파일명 검증 통과'
-            };
+            // 자산번호 추가 (중복 방지)
+            if (!groupedData[collectionNumber].assetNumbers.includes(assetNumber)) {
+                groupedData[collectionNumber].assetNumbers.push(assetNumber);
+            }
+            
+            // 자산 항목 추가 (중복 방지)
+            const assetItem = `${assetType} ${modelName}`.trim();
+            if (assetItem && !groupedData[collectionNumber].assetItems.includes(assetItem)) {
+                groupedData[collectionNumber].assetItems.push(assetItem);
+            }
         }
-
-        // 모드 전환
-        function switchMode(mode) {
-            console.log('모드 전환:', mode);
-            currentMode = mode;
-            
-            // 탭 활성화 상태 변경
-            document.querySelectorAll('.mode-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
-
-            // 바코드 섹션 표시/숨김
-            const barcodeSection = document.getElementById('barcodeSection');
-            if (mode === 'delivery') {
-                barcodeSection.classList.add('show');
-            } else {
-                barcodeSection.classList.remove('show');
-            }
-
-            // 파일 규칙 업데이트
-            updateFileRules();
-
-            // 기존 데이터 초기화
-            excelData = [];
-            const receiptWrapper = document.getElementById('receiptWrapper');
-            receiptWrapper.classList.remove('show');
-
-            const modeText = mode === 'receipt' ? '회수확인서' : '인수확인서';
-            showToast(`${modeText} 모드로 전환되었습니다.`);
-        }
-
-        // 파일 업로드 처리
-        function handleFileUpload(event) {
-            console.log('파일 업로드 시작');
-            const file = event.target.files[0];
-            if (!file) {
-                console.log('파일이 선택되지 않음');
-                return;
-            }
-
-            console.log('선택된 파일:', file.name);
-            
-            // 파일명 검증
-            const validation = validateFileName(file.name);
-            if (!validation.valid) {
-                showToast(validation.message, 'error');
-                // 파일 입력 초기화
-                event.target.value = '';
-                return;
-            }
-
-            showToast('파일명 검증 완료. 파일을 읽는 중...', 'success');
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    console.log('파일 읽기 완료, 파싱 시작');
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const firstSheetName = workbook.SheetNames[0];
-                    const worksheet = workbook.Sheets[firstSheetName];
-                    
-                    excelData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-                    console.log('파싱된 데이터:', excelData);
-                    
-                    if (excelData.length > 0) {
-                        showToast(`✅ 엑셀 파일 로드 성공!\n파일명: ${file.name}\n데이터: ${excelData.length}행`);
-                    } else {
-                        showToast('엑셀 파일에 데이터가 없습니다.', 'error');
-                    }
-                } catch (error) {
-                    console.error('파일 파싱 오류:', error);
-                    showToast('파일을 읽는 중 오류가 발생했습니다.', 'error');
-                }
-            };
-            
-            reader.onerror = function(error) {
-                console.error('파일 읽기 오류:', error);
-                showToast('파일 읽기 실패', 'error');
-            };
-            
-            reader.readAsArrayBuffer(file);
-        }
-
-        // 확인서 생성
-        function generateReceipt() {
-            console.log('확인서 생성 시작');
-            
-            if (excelData.length === 0) {
-                showToast('먼저 엑셀 파일을 업로드해주세요.', 'error');
-                return;
-            }
-
-            const receiptContainer = document.getElementById('receiptContainer');
-            const receiptWrapper = document.getElementById('receiptWrapper');
-
-            if (!receiptContainer || !receiptWrapper) {
-                showToast('확인서 컨테이너를 찾을 수 없습니다.', 'error');
-                return;
-            }
-
-            receiptWrapper.classList.add('show');
-
-            // 확인서 HTML 생성
-            let receiptsHTML = '';
-            const headers = excelData[0] || [];
-            const receiptType = currentMode === 'receipt' ? '회수확인서' : '인수확인서';
-            const actionText = currentMode === 'receipt' ? '회수' : '인수';
-            
-            console.log('헤더:', headers);
-            console.log('데이터 행 수:', excelData.length - 1);
-
-            for (let i = 1; i < excelData.length; i++) {
-                const row = excelData[i];
-                if (!row || row.length === 0) continue;
-
-                receiptsHTML += `
-                    <div class="receipt">
-                        <h2>${receiptType}</h2>
-                        <div class="receipt-info">
-                            ${headers.map((header, index) => {
-                                if (header && row[index] !== undefined && row[index] !== null && row[index] !== '') {
-                                    return `
-                                        <p>
-                                            <strong>${header}</strong>
-                                            <span class="value">${row[index]}</span>
-                                        </p>
-                                    `;
-                                }
-                                return '';
-                            }).join('')}
-                            <p>
-                                <strong>${actionText} 일시</strong>
-                                <span class="value">${new Date().toLocaleDateString('ko-KR')}</span>
-                            </p>
-                        </div>
-                        <div class="signature-section">
-                            <div class="signature-row">
-                                <div class="signature-group">
-                                    <span class="signature-title">${actionText}자</span>
-                                    <div class="signature-box"></div>
-                                </div>
-                                <div class="signature-group">
-                                    <span class="signature-title">확인자</span>
-                                    <div class="signature-box"></div>
-                                </div>
-                            </div>
-                        </div>
+    }
+    
+    // 그룹화된 데이터로 확인서 생성
+    Object.keys(groupedData).forEach(collectionNumber => {
+        const data = groupedData[collectionNumber];
+        
+        const receiptTitle = currentMode === 'receipt' ? 'LG CNS 회수 확인서' : '물품 인수 확인서';
+        const actionText = currentMode === 'receipt' ? '회수' : '인수';
+        
+        // 자산번호들을 콤마로 연결
+        const assetNumbers = data.assetNumbers.join(', ');
+        
+        // 자산 항목들을 콤마로 연결
+        const assetList = data.assetItems.join(', ');
+        
+        // 연락처 정보
+        const returnPersonInfo = `${data.contactPerson} ${data.phoneNumber}`.trim();
+        
+        // 기존 코드를 찾아서 다음과 같이 수정
+receiptsHTML += `
+    <div class="receipt-page">
+        <div class="receipt">
+            <h2>${receiptTitle}(회수자)</h2>
+            <div class="receipt-info">
+                <p><strong>자산번호</strong><span class="value">${assetNumbers}</span></p>
+                <p><strong>회수코드</strong><span class="value">${collectionNumber}</span></p>
+                <p><strong>반납자산목록</strong><span class="value">${assetList}</span></p>
+                <p><strong>반납자정보</strong><span class="value">${returnPersonInfo}</span></p>
+                <p><strong>회수일자</strong><span class="value">${currentDate}</span></p>
+            </div>
+            <div class="signature-section">
+                <div class="signature-row" style="justify-content: center !important;">
+                    <div class="signature-group">
+                        <span class="signature-title">회수자 :</span>
+                        <div class="signature-line"></div>
+                        <span style="margin-left: 10px;">인</span>
                     </div>
-                `;
-            }
+                    <div class="signature-group" style="margin-left: 10px;">
+                        <span class="signature-title">반납자 :</span>
+                        <div class="signature-line"></div>
+                        <span style="margin-left: 10px;">인</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="cut-line"></div>
+        <div class="receipt">
+    <h2>${receiptTitle}(반납자)</h2>
+    <div class="receipt-info">
+        <p><strong>자산번호</strong><span class="value">${assetNumbers}</span></p>
+        <p><strong>회수코드</strong><span class="value">${collectionNumber}</span></p>
+        <p><strong>반납자산목록</strong><span class="value">${assetList}</span></p>
+        <p><strong>반납자정보</strong><span class="value">${returnPersonInfo}</span></p>
+        <p><strong>회수일자</strong><span class="value">${currentDate}</span></p>
+    </div>
+    <div class="signature-section">
+        <div class="signature-row" style="justify-content: center !important;">
+            <div class="signature-group">
+                <span class="signature-title">회수자 :</span>
+                <div class="signature-line"></div>
+                <span style="margin-left: 10px;">인</span>
+            </div>
+        </div>
+    </div>
+</div>
+    </div>
+`;
+    });
+    
+    receiptContainer.innerHTML = receiptsHTML;
 
-            receiptContainer.innerHTML = receiptsHTML;
-            showToast(`${receiptType} ${excelData.length - 1}개가 생성되었습니다.`);
-            
-            // 스크롤을 확인서 영역으로 이동
-            receiptWrapper.scrollIntoView({ behavior: 'smooth' });
-        }
+// 마지막 receipt-page에 클래스 추가
+const allPages = receiptContainer.querySelectorAll('.receipt-page');
+if (allPages.length > 0) {
+    allPages[allPages.length - 1].classList.add('last-page');
+}
 
-        // 인쇄 기능
-        function printReceipt() {
-            const receiptWrapper = document.getElementById('receiptWrapper');
-            if (!receiptWrapper.classList.contains('show')) {
-                showToast('먼저 확인서를 생성해주세요.', 'error');
-                return;
-            }
+receiptWrapper.classList.add('show');
 
-            showToast('인쇄 창을 여는 중...');
-            setTimeout(() => {
-                window.print();
-            }, 500);
-        }
+showToast('✅ 확인서가 생성되었습니다!');
 
-        // 토스트 알림 표시
-        function showToast(message, type = 'success') {
-            console.log('토스트:', message, type);
-            const toast = document.getElementById('toast');
-            if (!toast) return;
+}
 
-            toast.textContent = message;
-            toast.className = `toast ${type}`;
-            toast.classList.add('show');
+      // 인쇄하기
+      function printReceipt() {
+          if (!document.getElementById('receiptWrapper').classList.contains('show')) {
+              showToast('❌ 먼저 확인서를 생성해주세요.', 'error');
+              return;
+          }
+          
+          window.print();
+      }
 
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, type === 'error' ? 5000 : 3000); // 에러 메시지는 더 오래 표시
-        }
-
-        // 바코드 스캐너 함수들 (기본 구현)
-        function startScanner() {
-            showToast('바코드 스캐너는 개발 중입니다.');
-        }
-
-        function stopScanner() {
-            showToast('바코드 스캐너가 중지되었습니다.');
-        }
-
-        // 에러 처리
-        window.addEventListener('error', function(event) {
-            console.error('전역 오류:', event.error);
-            showToast('시스템 오류가 발생했습니다.', 'error');
-        });
-
-        // 초기 로그
-        console.log('LG CNS 시스템 스크립트 로드 완료');
-    </script>
+      // 토스트 메시지 표시
+      function showToast(message, type = 'success') {
+          const toast = document.getElementById('toast');
+          toast.textContent = message;
+          toast.className = `toast ${type}`;
+          
+          // 표시
+          setTimeout(() => {
+              toast.classList.add('show');
+          }, 100);
+          
+          // 숨기기
+          setTimeout(() => {
+              toast.classList.remove('show');
+          }, 3000);
+      }
+  </script>
 </body>
 </html>
