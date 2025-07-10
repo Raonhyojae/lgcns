@@ -98,28 +98,7 @@ https://[username].github.io/[repository-name]/
 - 터치 친화적 인터페이스
 - 반응형 레이아웃
 - 모바일 서명 지원
-
-## 🚀 GitHub Pages 배포
-
-### **1. 저장소 설정**
-```bash
-git clone [repository-url]
-cd [repository-name]
-git add .
-git commit -m "Initial commit"
-git push origin main
-```
-
-### **2. Pages 활성화**
-1. GitHub 저장소 → **Settings**
-2. **Pages** 섹션 이동
-3. Source: **"Deploy from a branch"**
-4. Branch: **"main"** 선택
-5. **Save** 클릭
-
-### **3. 접속**
-- 배포 완료 후: `https://[username].github.io/[repository-name]/`
-
+- 
 ## 🔍 주요 업데이트
 
 ### **v3.0 (현재)**
