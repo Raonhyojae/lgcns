@@ -556,13 +556,179 @@
         font-weight: 600 !important;
         font-size: 12px !important;
     }
-    
+
+    .signature-box.signed {
+        background-size: contain !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+        border: 2px solid #333 !important;
+    }
+   
     /* 페이지 여백 설정 */
     @page {
         size: A4 !important;
         margin: 10mm !important;
     }
 }
+      /* 서명 모달 스타일 - 여기부터 추가 */
+      .signature-modal {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.8);
+          z-index: 10000;
+          display: none;
+          justify-content: center;
+          align-items: center;
+      }
+
+      .signature-modal.show {
+          display: flex;
+      }
+
+      .signature-popup {
+          background: white;
+          border-radius: 15px;
+          padding: 30px;
+          max-width: 90vw;
+          max-height: 90vh;
+          box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+          position: relative;
+      }
+
+      .signature-header {
+          text-align: center;
+          margin-bottom: 20px;
+          padding-bottom: 15px;
+          border-bottom: 2px solid #667eea;
+      }
+
+      .signature-header h3 {
+          color: #333;
+          font-size: 24px;
+          font-weight: 700;
+          margin-bottom: 10px;
+      }
+
+      .signature-header p {
+          color: #666;
+          font-size: 16px;
+      }
+
+      .signature-canvas {
+          border: 3px solid #667eea;
+          border-radius: 10px;
+          cursor: crosshair;
+          touch-action: none;
+          background: white;
+          display: block;
+          margin: 0 auto;
+      }
+
+      .signature-controls {
+          display: flex;
+          justify-content: center;
+          gap: 15px;
+          margin-top: 20px;
+          flex-wrap: wrap;
+      }
+
+      .signature-btn {
+          padding: 12px 25px;
+          border: none;
+          border-radius: 25px;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: 600;
+          transition: all 0.3s ease;
+          min-width: 120px;
+      }
+
+      .signature-btn.clear {
+          background: #dc3545;
+          color: white;
+      }
+
+      .signature-btn.clear:hover {
+          background: #c82333;
+          transform: translateY(-2px);
+      }
+
+      .signature-btn.save {
+          background: #28a745;
+          color: white;
+      }
+
+      .signature-btn.save:hover {
+          background: #218838;
+          transform: translateY(-2px);
+      }
+
+      .signature-btn.cancel {
+          background: #6c757d;
+          color: white;
+      }
+
+      .signature-btn.cancel:hover {
+          background: #5a6268;
+          transform: translateY(-2px);
+      }
+
+      .signature-box {
+          border: 2px solid #333;
+          height: 80px;
+          width: 200px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #999;
+          font-size: 16px;
+          background: white;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          border-radius: 5px;
+          position: relative;
+          overflow: hidden;
+      }
+
+      .signature-box:hover {
+          border-color: #667eea;
+          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+      }
+
+      .signature-box.signed {
+          background-size: contain;
+          background-repeat: no-repeat;
+          background-position: center;
+          color: transparent;
+          border-color: #28a745;
+      }
+
+      .signature-box.signed::after {
+          content: "✓ 서명완료";
+          position: absolute;
+          bottom: 5px;
+          right: 5px;
+          background: #28a745;
+          color: white;
+          padding: 2px 6px;
+          border-radius: 3px;
+          font-size: 10px;
+          font-weight: 600;
+      }
+
+      @media print {
+          .signature-modal {
+              display: none !important;
+          }
+          
+          .signature-box.signed::after {
+              display: none !important;
+          }
+      }
+      /* 서명 모달 스타일 - 여기까지 추가 */
   </style>
 </head>
 <body>
@@ -805,7 +971,7 @@
           reader.readAsArrayBuffer(file);
       }
 
-// 확인서 생성
+// 확인서 생성 함수에서 인수확인서 부분만 수정
 function generateReceipt() {
     if (excelData.length === 0) {
         showToast('❌ 먼저 엑셀 파일을 업로드해주세요.', 'error');
@@ -818,135 +984,177 @@ function generateReceipt() {
     let receiptsHTML = '';
     const currentDate = new Date().toLocaleDateString('ko-KR');
     
-    // 회수코드별로 데이터 그룹화
-    const groupedData = {};
+    if (currentMode === 'receipt') {
+        // 기존 회수확인서 로직 유지 (수정하지 않음)
+        const groupedData = {};
+        
+        for (let i = 5; i < excelData.length; i++) {
+            const row = excelData[i];
+            if (row && row.length > 0) {
+                const assetNumber = row[0] ? String(row[0]).trim() : '';
+                
+                if (!assetNumber || !/^\d/.test(assetNumber)) {
+                    continue;
+                }
+                
+                const collectionNumber = row[1] ? String(row[1]).trim() : '';
+                if (!collectionNumber) {
+                    continue;
+                }
+                
+                const assetType = row[2] ? String(row[2]).trim() : '';
+                const modelName = row[3] ? String(row[3]).trim() : '';
+                const contactPerson = row[9] ? String(row[9]).trim() : '';
+                const phoneNumber = row[10] ? String(row[10]).trim() : '';
+                
+                if (!groupedData[collectionNumber]) {
+                    groupedData[collectionNumber] = {
+                        assetNumbers: [],
+                        assetItems: [],
+                        contactPerson: contactPerson,
+                        phoneNumber: phoneNumber
+                    };
+                }
+                
+                if (!groupedData[collectionNumber].assetNumbers.includes(assetNumber)) {
+                    groupedData[collectionNumber].assetNumbers.push(assetNumber);
+                }
+                
+                const assetItem = `${assetType} ${modelName}`.trim();
+                if (assetItem && !groupedData[collectionNumber].assetItems.includes(assetItem)) {
+                    groupedData[collectionNumber].assetItems.push(assetItem);
+                }
+            }
+        }
+        
+        Object.keys(groupedData).forEach(collectionNumber => {
+            const data = groupedData[collectionNumber];
+            const assetNumbers = data.assetNumbers.join(', ');
+            const assetList = data.assetItems.join(', ');
+            const returnPersonInfo = `${data.contactPerson} ${data.phoneNumber}`.trim();
+            
+            receiptsHTML += `
+                <div class="receipt-page">
+                    <div class="receipt">
+                        <h2>LG CNS 회수 확인서(회수자)</h2>
+                        <div class="receipt-info">
+                            <p><strong>자산번호</strong><span class="value">${assetNumbers}</span></p>
+                            <p><strong>회수코드</strong><span class="value">${collectionNumber}</span></p>
+                            <p><strong>반납자산목록</strong><span class="value">${assetList}</span></p>
+                            <p><strong>반납자정보</strong><span class="value">${returnPersonInfo}</span></p>
+                            <p><strong>회수일자</strong><span class="value">${currentDate}</span></p>
+                        </div>
+                        <div class="signature-section">
+                            <div class="signature-row" style="justify-content: center !important;">
+                                <div class="signature-group">
+                                    <span class="signature-title">회수자 :</span>
+                                    <div class="signature-line"></div>
+                                    <span style="margin-left: 10px;">인</span>
+                                </div>
+                                <div class="signature-group" style="margin-left: 10px;">
+                                    <span class="signature-title">반납자 :</span>
+                                    <div class="signature-line"></div>
+                                    <span style="margin-left: 10px;">인</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cut-line"></div>
+                    <div class="receipt">
+                        <h2>LG CNS 회수 확인서(반납자)</h2>
+                        <div class="receipt-info">
+                            <p><strong>자산번호</strong><span class="value">${assetNumbers}</span></p>
+                            <p><strong>회수코드</strong><span class="value">${collectionNumber}</span></p>
+                            <p><strong>반납자산목록</strong><span class="value">${assetList}</span></p>
+                            <p><strong>반납자정보</strong><span class="value">${returnPersonInfo}</span></p>
+                            <p><strong>회수일자</strong><span class="value">${currentDate}</span></p>
+                        </div>
+                        <div class="signature-section">
+                            <div class="signature-row" style="justify-content: center !important;">
+                                <div class="signature-group">
+                                    <span class="signature-title">회수자 :</span>
+                                    <div class="signature-line"></div>
+                                    <span style="margin-left: 10px;">인</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+    } else if (currentMode === 'delivery') {
+        // 새로운 인수확인서 로직 (이미지 양식에 맞춤)
+        for (let i = 1; i < excelData.length; i++) {
+            const row = excelData[i];
+            if (row && row.length > 0 && row.some(cell => cell)) {
+                // 엑셀 데이터에서 필요한 정보 추출
+                const contractNumber = row[0] || 'C000164353-1';
+                const productName = row[1] || '16MR70';
+                const serialNumber = row[2] || '시리얼번호를 입력하세요';
+                const userName = row[3] || '임재학 책임';
+                const deliveryLocation = row[4] || 'LG CNS';
+                
+                receiptsHTML += `
+                    <div class="receipt-page">
+                        <div class="receipt" style="border: 3px solid #333; border-radius: 10px; padding: 30px; background: #fafafa;">
+                            <h2 style="text-align: center; font-size: 24px; font-weight: bold; margin-bottom: 30px; border-bottom: 3px solid #333; padding-bottom: 15px;">LG CNS 인수 확인서</h2>
+                            
+                            <div class="receipt-info" style="margin-bottom: 40px;">
+                                <div style="display: flex; margin-bottom: 15px; align-items: center;">
+                                    <strong style="width: 120px; font-size: 16px; font-weight: bold;">계약번호:</strong>
+                                    <span class="value" style="flex: 1; padding: 10px; border: 1px solid #ddd; background: white; border-radius: 4px; font-size: 16px;">${contractNumber}</span>
+                                </div>
+                                
+                                <div style="display: flex; margin-bottom: 15px; align-items: center;">
+                                    <strong style="width: 120px; font-size: 16px; font-weight: bold;">제품명:</strong>
+                                    <span class="value" style="flex: 1; padding: 10px; border: 1px solid #ddd; background: white; border-radius: 4px; font-size: 16px;">${productName}</span>
+                                </div>
+                                
+                                <div style="display: flex; margin-bottom: 15px; align-items: center;">
+                                    <strong style="width: 120px; font-size: 16px; font-weight: bold;">시리얼번호:</strong>
+                                    <span class="value" style="flex: 1; padding: 10px; border: 1px solid #ddd; background: #f8f9fa; border-radius: 4px; font-size: 16px; color: #666;">${serialNumber}</span>
+                                </div>
+                                
+                                <div style="display: flex; margin-bottom: 15px; align-items: center;">
+                                    <strong style="width: 120px; font-size: 16px; font-weight: bold;">사용자:</strong>
+                                    <span class="value" style="flex: 1; padding: 10px; border: 1px solid #ddd; background: white; border-radius: 4px; font-size: 16px;">${userName}</span>
+                                </div>
+                                
+                                <div style="display: flex; margin-bottom: 15px; align-items: center;">
+                                    <strong style="width: 120px; font-size: 16px; font-weight: bold;">인수일자:</strong>
+                                    <span class="value" style="flex: 1; padding: 10px; border: 1px solid #ddd; background: white; border-radius: 4px; font-size: 16px;">${currentDate}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="signature-section" style="display: flex; gap: 30px; margin-top: 40px; justify-content: center;">
+    <div style="text-align: center;">
+        <div style="font-size: 20px; font-weight: bold; margin-bottom: 25px;">사용자</div>
+        <div class="signature-box" onclick="openSignatureModal('user', ${i})" data-type="user" data-index="${i}">서명</div>
+    </div>
     
-    // 6행부터 데이터 시작 (0-based index로 5부터)
-    for (let i = 5; i < excelData.length; i++) {
-        const row = excelData[i];
-        if (row && row.length > 0) {
-            // 실제 자산 데이터인지 확인 (자산번호가 숫자로 시작하는지 체크)
-            const assetNumber = row[0] ? String(row[0]).trim() : '';
-            
-            // 자산번호가 숫자로 시작하지 않으면 건너뛰기 (지역명 등 제외)
-            if (!assetNumber || !/^\d/.test(assetNumber)) {
-                continue;
-            }
-            
-            // 수거번호가 없으면 건너뛰기
-            const collectionNumber = row[1] ? String(row[1]).trim() : '';
-            if (!collectionNumber) {
-                continue;
-            }
-            
-            // 데이터 추출
-            const assetType = row[2] ? String(row[2]).trim() : '';  // C열 - 자산분류
-            const modelName = row[3] ? String(row[3]).trim() : '';  // D열 - 모델명
-            const contactPerson = row[9] ? String(row[9]).trim() : '';  // J열 - 연락드릴 분
-            const phoneNumber = row[10] ? String(row[10]).trim() : '';  // K열 - 전화번호
-            
-            // 회수코드별로 그룹화
-            if (!groupedData[collectionNumber]) {
-                groupedData[collectionNumber] = {
-                    assetNumbers: [],
-                    assetItems: [],
-                    contactPerson: contactPerson,
-                    phoneNumber: phoneNumber
-                };
-            }
-            
-            // 자산번호 추가 (중복 방지)
-            if (!groupedData[collectionNumber].assetNumbers.includes(assetNumber)) {
-                groupedData[collectionNumber].assetNumbers.push(assetNumber);
-            }
-            
-            // 자산 항목 추가 (중복 방지)
-            const assetItem = `${assetType} ${modelName}`.trim();
-            if (assetItem && !groupedData[collectionNumber].assetItems.includes(assetItem)) {
-                groupedData[collectionNumber].assetItems.push(assetItem);
+    <div style="text-align: center;">
+        <div style="font-size: 20px; font-weight: bold; margin-bottom: 25px;">대리인</div>
+        <div class="signature-box" onclick="openSignatureModal('agent', ${i})" data-type="agent" data-index="${i}">서명</div>
+    </div>
+</div>
+                        </div>
+                    </div>
+                `;
             }
         }
     }
     
-    // 그룹화된 데이터로 확인서 생성
-    Object.keys(groupedData).forEach(collectionNumber => {
-        const data = groupedData[collectionNumber];
-        
-        const receiptTitle = currentMode === 'receipt' ? 'LG CNS 회수 확인서' : '물품 인수 확인서';
-        const actionText = currentMode === 'receipt' ? '회수' : '인수';
-        
-        // 자산번호들을 콤마로 연결
-        const assetNumbers = data.assetNumbers.join(', ');
-        
-        // 자산 항목들을 콤마로 연결
-        const assetList = data.assetItems.join(', ');
-        
-        // 연락처 정보
-        const returnPersonInfo = `${data.contactPerson} ${data.phoneNumber}`.trim();
-        
-        // 기존 코드를 찾아서 다음과 같이 수정
-receiptsHTML += `
-    <div class="receipt-page">
-        <div class="receipt">
-            <h2>${receiptTitle}(회수자)</h2>
-            <div class="receipt-info">
-                <p><strong>자산번호</strong><span class="value">${assetNumbers}</span></p>
-                <p><strong>회수코드</strong><span class="value">${collectionNumber}</span></p>
-                <p><strong>반납자산목록</strong><span class="value">${assetList}</span></p>
-                <p><strong>반납자정보</strong><span class="value">${returnPersonInfo}</span></p>
-                <p><strong>회수일자</strong><span class="value">${currentDate}</span></p>
-            </div>
-            <div class="signature-section">
-                <div class="signature-row" style="justify-content: center !important;">
-                    <div class="signature-group">
-                        <span class="signature-title">회수자 :</span>
-                        <div class="signature-line"></div>
-                        <span style="margin-left: 10px;">인</span>
-                    </div>
-                    <div class="signature-group" style="margin-left: 10px;">
-                        <span class="signature-title">반납자 :</span>
-                        <div class="signature-line"></div>
-                        <span style="margin-left: 10px;">인</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="cut-line"></div>
-        <div class="receipt">
-    <h2>${receiptTitle}(반납자)</h2>
-    <div class="receipt-info">
-        <p><strong>자산번호</strong><span class="value">${assetNumbers}</span></p>
-        <p><strong>회수코드</strong><span class="value">${collectionNumber}</span></p>
-        <p><strong>반납자산목록</strong><span class="value">${assetList}</span></p>
-        <p><strong>반납자정보</strong><span class="value">${returnPersonInfo}</span></p>
-        <p><strong>회수일자</strong><span class="value">${currentDate}</span></p>
-    </div>
-    <div class="signature-section">
-        <div class="signature-row" style="justify-content: center !important;">
-            <div class="signature-group">
-                <span class="signature-title">회수자 :</span>
-                <div class="signature-line"></div>
-                <span style="margin-left: 10px;">인</span>
-            </div>
-        </div>
-    </div>
-</div>
-    </div>
-`;
-    });
-    
     receiptContainer.innerHTML = receiptsHTML;
 
-// 마지막 receipt-page에 클래스 추가
-const allPages = receiptContainer.querySelectorAll('.receipt-page');
-if (allPages.length > 0) {
-    allPages[allPages.length - 1].classList.add('last-page');
-}
+    // 마지막 receipt-page에 클래스 추가
+    const allPages = receiptContainer.querySelectorAll('.receipt-page');
+    if (allPages.length > 0) {
+        allPages[allPages.length - 1].classList.add('last-page');
+    }
 
-receiptWrapper.classList.add('show');
-
-showToast('✅ 확인서가 생성되었습니다!');
-
+    receiptWrapper.classList.add('show');
+    showToast('✅ 확인서가 생성되었습니다!');
 }
 
       // 인쇄하기
@@ -974,6 +1182,223 @@ showToast('✅ 확인서가 생성되었습니다!');
           setTimeout(() => {
               toast.classList.remove('show');
           }, 3000);
+      }
+      // 서명 관련 변수
+      let canvas, ctx;
+      let isDrawing = false;
+      let currentSignatureType = '';
+      let currentSignatureIndex = 0;
+
+      // 서명 모달 열기
+      function openSignatureModal(type, index) {
+          currentSignatureType = type;
+          currentSignatureIndex = index;
+          
+          // 동적으로 모달 생성
+          createSignatureModal();
+          
+          const modal = document.getElementById('signatureModal');
+          const title = document.getElementById('signatureTitle');
+          
+          title.textContent = type === 'user' ? '사용자 서명' : '대리인 서명';
+          
+          modal.classList.add('show');
+          
+          // 캔버스 초기화
+          canvas = document.getElementById('signatureCanvas');
+          ctx = canvas.getContext('2d');
+          
+          // 캔버스 설정
+          ctx.strokeStyle = '#000';
+          ctx.lineWidth = 2;
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+          
+          // 이벤트 리스너 추가
+          setupCanvasEvents();
+          
+          // 기존 서명이 있다면 표시
+          const existingSignature = getExistingSignature(type, index);
+          if (existingSignature) {
+              const img = new Image();
+              img.onload = function() {
+                  ctx.clearRect(0, 0, canvas.width, canvas.height);
+                  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+              };
+              img.src = existingSignature;
+          } else {
+              clearSignature();
+          }
+      }
+
+      // 서명 모달 동적 생성
+      function createSignatureModal() {
+          // 기존 모달이 있다면 제거
+          const existingModal = document.getElementById('signatureModal');
+          if (existingModal) {
+              existingModal.remove();
+          }
+          
+          // 새 모달 생성
+          const modalHTML = `
+              <div class="signature-modal" id="signatureModal">
+                  <div class="signature-popup">
+                      <div class="signature-header">
+                          <h3 id="signatureTitle">서명하기</h3>
+                          <p>아래 영역에 손가락이나 펜으로 서명해주세요</p>
+                      </div>
+                      <canvas id="signatureCanvas" class="signature-canvas" width="500" height="200"></canvas>
+                      <div class="signature-controls">
+                          <button class="signature-btn clear" onclick="clearSignature()">🗑️ 지우기</button>
+                          <button class="signature-btn save" onclick="saveSignature()">✅ 저장</button>
+                          <button class="signature-btn cancel" onclick="closeSignatureModal()">❌ 취소</button>
+                      </div>
+                  </div>
+              </div>
+          `;
+          
+          document.body.insertAdjacentHTML('beforeend', modalHTML);
+      }
+
+      // 서명 모달 닫기
+      function closeSignatureModal() {
+          const modal = document.getElementById('signatureModal');
+          if (modal) {
+              modal.classList.remove('show');
+              
+              // 이벤트 리스너 제거
+              removeCanvasEvents();
+              
+              // 모달 제거
+              setTimeout(() => {
+                  modal.remove();
+              }, 300);
+          }
+      }
+
+      // 캔버스 이벤트 설정
+      function setupCanvasEvents() {
+          // 마우스 이벤트
+          canvas.addEventListener('mousedown', startDrawing);
+          canvas.addEventListener('mousemove', draw);
+          canvas.addEventListener('mouseup', stopDrawing);
+          canvas.addEventListener('mouseout', stopDrawing);
+          
+          // 터치 이벤트
+          canvas.addEventListener('touchstart', handleTouch);
+          canvas.addEventListener('touchmove', handleTouch);
+          canvas.addEventListener('touchend', stopDrawing);
+      }
+
+      // 캔버스 이벤트 제거
+      function removeCanvasEvents() {
+          if (canvas) {
+              canvas.removeEventListener('mousedown', startDrawing);
+              canvas.removeEventListener('mousemove', draw);
+              canvas.removeEventListener('mouseup', stopDrawing);
+              canvas.removeEventListener('mouseout', stopDrawing);
+              canvas.removeEventListener('touchstart', handleTouch);
+              canvas.removeEventListener('touchmove', handleTouch);
+              canvas.removeEventListener('touchend', stopDrawing);
+          }
+      }
+
+      // 그리기 시작
+      function startDrawing(e) {
+          isDrawing = true;
+          const rect = canvas.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+      }
+
+      // 그리기
+      function draw(e) {
+          if (!isDrawing) return;
+          
+          const rect = canvas.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          
+          ctx.lineTo(x, y);
+          ctx.stroke();
+      }
+
+      // 그리기 중지
+      function stopDrawing() {
+          isDrawing = false;
+          ctx.beginPath();
+      }
+
+      // 터치 이벤트 처리
+      function handleTouch(e) {
+          e.preventDefault();
+          const touch = e.touches[0];
+          const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' : 
+                                           e.type === 'touchmove' ? 'mousemove' : 'mouseup', {
+              clientX: touch.clientX,
+              clientY: touch.clientY
+          });
+          canvas.dispatchEvent(mouseEvent);
+      }
+
+      // 서명 지우기
+      function clearSignature() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = 'white';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+
+      // 서명 저장
+      function saveSignature() {
+          const signatureData = canvas.toDataURL();
+          
+          // 빈 서명 체크
+          if (isCanvasEmpty()) {
+              showToast('❌ 서명을 입력해주세요.', 'error');
+              return;
+          }
+          
+          // 서명 박스에 적용
+          const signatureBox = document.querySelector(`[data-type="${currentSignatureType}"][data-index="${currentSignatureIndex}"]`);
+          if (signatureBox) {
+              signatureBox.style.backgroundImage = `url(${signatureData})`;
+              signatureBox.classList.add('signed');
+              signatureBox.textContent = '';
+          }
+          
+          // 서명 데이터 저장
+          saveSignatureData(currentSignatureType, currentSignatureIndex, signatureData);
+          
+          showToast('✅ 서명이 저장되었습니다.');
+          closeSignatureModal();
+      }
+
+      // 캔버스가 비어있는지 확인
+      function isCanvasEmpty() {
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const data = imageData.data;
+          
+          for (let i = 0; i < data.length; i += 4) {
+              if (data[i + 3] !== 0) { // 알파 채널이 0이 아니면 그림이 있음
+                  return false;
+              }
+          }
+          return true;
+      }
+
+      // 서명 데이터 저장 (로컬 스토리지 사용)
+      function saveSignatureData(type, index, data) {
+          const key = `signature_${type}_${index}`;
+          localStorage.setItem(key, data);
+      }
+
+      // 기존 서명 데이터 가져오기
+      function getExistingSignature(type, index) {
+          const key = `signature_${type}_${index}`;
+          return localStorage.getItem(key);
       }
   </script>
 </body>
