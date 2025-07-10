@@ -33,8 +33,30 @@
           padding: 20px;
           border-radius: 15px;
           backdrop-filter: blur(10px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+         gap: 20px;
       }
+.lgcns-logo {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    filter: brightness(1.2);
+}
 
+.estream-logo {
+    display: block;
+    margin: 20px auto;
+    width: 200px;
+    height: auto;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.estream-logo:hover {
+    opacity: 1;
+}
       .mode-tabs {
           display: flex;
           justify-content: center;
@@ -788,7 +810,10 @@
 </head>
 <body>
   <div class="container">
-      <h1>🏢 LG CNS 통합 물품관리 시스템</h1>
+      <h1>
+    <img src="https://raw.githubusercontent.com/your-username/your-repo/main/images/lgcns_logo.png" alt="LG CNS" class="lgcns-logo">
+    🏢 LG CNS 통합 물품관리 시스템
+</h1>
       
       <div class="mode-tabs">
           <div class="mode-tab active" data-mode="receipt">📤 회수확인서</div>
@@ -821,6 +846,9 @@
           <button class="btn btn-primary" onclick="generateReceipt()">📋 확인서 생성</button>
           <button class="btn btn-secondary" onclick="printReceipt()">🖨️ 인쇄하기</button>
       </div>
+      </div>
+
+      <img src="https://raw.githubusercontent.com/your-username/your-repo/main/images/estream_logo.png" alt="eSTREAM" class="estream-logo">
 
       <div class="receipt-wrapper" id="receiptWrapper">
           <div id="receiptContainer"></div>
