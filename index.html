@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
   <title>LG CNS 통합 물품관리 시스템</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://unpkg.com/@zxing/library@latest/umd/index.min.js"></script>
@@ -987,6 +987,255 @@
         display: none !important;
     }
 }
+
+        /* 모바일 최적화 스타일 */
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 10px;
+                margin: 0;
+            }
+            
+            .mode-tab {
+                padding: 15px 20px;
+                font-size: 16px;
+                margin: 5px;
+            }
+            
+            .file-input-label {
+                padding: 20px 25px;
+                font-size: 18px;
+                display: block;
+                margin: 15px 0;
+                text-align: center;
+            }
+            
+            .btn {
+                padding: 15px 25px;
+                font-size: 16px;
+                margin: 8px 5px;
+                min-height: 50px;
+                display: inline-block;
+                width: calc(50% - 10px);
+                box-sizing: border-box;
+            }
+            
+            .controls {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            
+            .barcode-popup {
+                max-width: 95vw;
+                max-height: 90vh;
+                padding: 15px;
+                margin: 20px auto;
+            }
+            
+            .barcode-video {
+                width: 100%;
+                height: 280px;
+                border-radius: 10px;
+            }
+            
+            .signature-popup {
+                max-width: 95vw;
+                max-height: 85vh;
+                padding: 15px;
+                margin: 20px auto;
+            }
+            
+            .signature-canvas {
+                width: 100%;
+                max-width: 100%;
+                height: 200px;
+                border-radius: 8px;
+            }
+            
+            .signature-controls, .barcode-controls {
+                flex-direction: column;
+                gap: 12px;
+                margin-top: 15px;
+            }
+            
+            .signature-btn, .barcode-btn {
+                width: 100%;
+                padding: 18px;
+                font-size: 16px;
+                border-radius: 8px;
+            }
+            
+            /* 테이블 모바일 최적화 */
+            table {
+                font-size: 12px;
+            }
+            
+            th, td {
+                padding: 8px 4px;
+                word-break: break-all;
+            }
+            
+            /* 메시지 박스 모바일 최적화 */
+            .message {
+                font-size: 14px;
+                padding: 12px;
+                margin: 10px 0;
+            }
+            
+            /* 인수확인서 모바일 최적화 */
+            .receipt {
+                padding: 20px !important;
+            }
+            
+            .receipt h2 {
+                font-size: 20px !important;
+            }
+            
+            .receipt-info div {
+                flex-direction: column !important;
+                margin-bottom: 12px !important;
+            }
+            
+            .receipt-info strong {
+                width: 100% !important;
+                margin-bottom: 5px !important;
+                border-radius: 4px !important;
+                border-right: 1px solid #ddd !important;
+            }
+            
+            .receipt-info .value, .serial-input {
+                width: 100% !important;
+                border-radius: 4px !important;
+            }
+            
+            .barcode-input-wrapper {
+                flex-direction: column !important;
+                gap: 8px !important;
+            }
+            
+            .barcode-scan-btn {
+                width: 100% !important;
+                padding: 12px !important;
+            }
+            
+            .signature-section {
+                flex-direction: column !important;
+                gap: 20px !important;
+                text-align: center !important;
+            }
+            
+            .signature-box {
+                width: 200px !important;
+                height: 60px !important;
+                margin: 0 auto !important;
+            }
+        }
+
+        /* 터치 디바이스 최적화 */
+        @media (hover: none) and (pointer: coarse) {
+            .btn:hover,
+            .mode-tab:hover,
+            .file-input-label:hover {
+                transform: none;
+                box-shadow: none;
+            }
+            
+            .btn:active,
+            .mode-tab:active,
+            .file-input-label:active {
+                transform: scale(0.98);
+                transition: transform 0.1s;
+            }
+            
+            /* 터치 영역 확대 */
+            .btn, .mode-tab, .file-input-label {
+                min-height: 48px;
+                touch-action: manipulation;
+            }
+            
+            .signature-box {
+                min-height: 60px;
+                touch-action: manipulation;
+            }
+            
+            .barcode-scan-btn {
+                min-height: 44px;
+                touch-action: manipulation;
+            }
+        }
+
+        /* 세로 모드 최적화 */
+        @media screen and (max-width: 480px) and (orientation: portrait) {
+            .barcode-video {
+                height: 250px;
+            }
+            
+            .signature-canvas {
+                height: 180px;
+            }
+            
+            .btn {
+                width: 100%;
+                margin: 5px 0;
+            }
+            
+            .controls {
+                padding: 10px;
+            }
+            
+            .date-display {
+                font-size: 14px;
+                padding: 12px 20px;
+            }
+        }
+
+        /* 가로 모드 최적화 */
+        @media screen and (max-height: 500px) and (orientation: landscape) {
+            .barcode-popup {
+                max-height: 95vh;
+                padding: 10px;
+            }
+            
+            .barcode-video {
+                height: 200px;
+            }
+            
+            .signature-popup {
+                max-height: 90vh;
+                padding: 10px;
+            }
+            
+            .signature-canvas {
+                height: 120px;
+            }
+            
+            .signature-controls, .barcode-controls {
+                flex-direction: row;
+                justify-content: center;
+                gap: 10px;
+            }
+            
+            .signature-btn, .barcode-btn {
+                width: auto;
+                min-width: 100px;
+                padding: 12px 20px;
+            }
+        }
+
+        /* 아이폰 Safari 최적화 */
+        @supports (-webkit-touch-callout: none) {
+            .signature-canvas {
+                touch-action: none;
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+            }
+            
+            .barcode-video {
+                -webkit-playsinline: true;
+                object-fit: cover;
+            }
+        }
+
 </style>
 </head>
 <body>
@@ -1044,6 +1293,36 @@
       // 전역 변수
       let currentMode = 'receipt';
       let excelData = [];
+
+// 권한 체크 함수들
+async function checkCameraPermission() {
+    try {
+        if (!navigator.permissions) {
+            console.log('⚠️ Permissions API 미지원');
+            return 'unknown';
+        }
+        
+        const permission = await navigator.permissions.query({ name: 'camera' });
+        console.log('📷 카메라 권한 상태:', permission.state);
+        return permission.state;
+        
+    } catch (error) {
+        console.log('⚠️ 권한 확인 실패:', error);
+        return 'unknown';
+    }
+}
+
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
 
       // 파일명 검증 규칙
       const fileValidationRules = {
@@ -1209,6 +1488,28 @@
           }
 
           showMessage('📄 파일 검증 완료. 읽는 중...', 'info');
+
+        // 파일 크기 및 정보 체크 (모바일 최적화)
+        const maxSize = 50 * 1024 * 1024; // 50MB
+        if (file.size > maxSize) {
+            showMessage(`❌ 파일이 너무 큽니다. (최대 ${formatFileSize(maxSize)})`, 'error');
+            event.target.value = '';
+            return;
+        }
+        
+        // 파일 정보 로깅
+        console.log('📄 파일 업로드 시작:', {
+            이름: file.name,
+            크기: formatFileSize(file.size),
+            타입: file.type,
+            최종수정: new Date(file.lastModified).toLocaleString(),
+            모바일여부: isMobileDevice()
+        });
+        
+        // 모바일에서 큰 파일 처리 시 경고
+        if (isMobileDevice() && file.size > 10 * 1024 * 1024) { // 10MB 이상
+            showMessage('📱 모바일에서 큰 파일 처리 중입니다. 잠시만 기다려주세요...', 'info');
+        }
 
           const reader = new FileReader();
           
@@ -1831,50 +2132,153 @@ function openBarcodeScanner(button) {
 // 바코드 스캐너 시작
 async function startBarcodeScanner() {
     try {
-        // ZXing 라이브러리 초기화
-        if (typeof ZXing !== 'undefined') {
-            barcodeReader = new ZXing.BrowserMultiFormatReader();
-            
-            const videoElement = document.getElementById('barcodeVideo');
-            
-            // 카메라 스트림 시작
-            const constraints = {
-                video: {
-                    facingMode: 'environment', // 후면 카메라 우선
-                    width: { ideal: 640 },
-                    height: { ideal: 480 }
-                }
-            };
-            
-            currentStream = await navigator.mediaDevices.getUserMedia(constraints);
-            videoElement.srcObject = currentStream;
-            
-            // 바코드 스캔 시작
-            barcodeReader.decodeFromVideoDevice(null, 'barcodeVideo', (result, err) => {
-                if (result) {
-                    const scannedText = result.getText();
-                    handleBarcodeResult(scannedText);
-                }
-            });
-            
-            showMessage('📷 카메라가 시작되었습니다. 바코드를 비춰주세요.', 'info');
-            
-        } else {
-            throw new Error('바코드 라이브러리를 불러올 수 없습니다.');
+        console.log('📷 바코드 스캐너 시작...');
+        
+        // 1단계: 권한 상태 확인
+        const permissionState = await checkCameraPermission();
+        
+        if (permissionState === 'denied') {
+            throw new Error('PERMISSION_DENIED');
+        }
+        
+        // 2단계: 미디어 장치 지원 여부 확인
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            throw new Error('MEDIA_NOT_SUPPORTED');
+        }
+        
+        // 3단계: ZXing 라이브러리 확인
+        if (typeof ZXing === 'undefined') {
+            throw new Error('LIBRARY_NOT_LOADED');
+        }
+        
+        // 4단계: 모바일 최적화 카메라 설정
+        const constraints = {
+            video: {
+                facingMode: 'environment', // 후면 카메라 우선
+                width: { ideal: 1280, max: 1920 }, // 고해상도로 바코드 인식률 향상
+                height: { ideal: 720, max: 1080 },
+                frameRate: { ideal: 30, max: 60 } // 부드러운 스캔
+            }
+        };
+        
+        // 5단계: 권한 요청 메시지
+        showMessage('📷 카메라 권한을 요청합니다...', 'info');
+        
+        // 6단계: 카메라 스트림 시작
+        currentStream = await navigator.mediaDevices.getUserMedia(constraints);
+        const videoElement = document.getElementById('barcodeVideo');
+        videoElement.srcObject = currentStream;
+        
+        // 7단계: 바코드 리더 초기화
+        barcodeReader = new ZXing.BrowserMultiFormatReader();
+        
+        // 8단계: 바코드 스캔 시작 (에러 처리 강화)
+        barcodeReader.decodeFromVideoDevice(null, 'barcodeVideo', (result, err) => {
+            if (result) {
+                const scannedText = result.getText();
+                console.log('📊 바코드 스캔 성공:', scannedText);
+                handleBarcodeResult(scannedText);
+            } else if (err && err.name !== 'NotFoundException') {
+                // NotFoundException은 바코드를 찾지 못한 정상적인 상황
+                console.log('바코드 스캔 중...', err.name);
+            }
+        });
+        
+        showMessage('✅ 카메라가 시작되었습니다. 바코드를 비춰주세요.', 'success');
+        
+        // 9단계: 모바일용 추가 안내
+        if (isMobileDevice()) {
+            setTimeout(() => {
+                showMessage('💡 모바일 팁: 화면을 가로로 돌리고 바코드에 가까이 대보세요.', 'info');
+            }, 3000);
         }
         
     } catch (error) {
-        console.error('카메라 시작 오류:', error);
-        showMessage('❌ 카메라를 시작할 수 없습니다. 블루투스 스캐너를 사용해주세요.', 'error');
+        console.error('❌ 카메라 시작 오류:', error);
         
-        // 카메라 실패 시 키보드 입력만 활성화
-        document.getElementById('barcodeResult').innerHTML = `
-            <div style="color: #856404; background: #fff3cd; border-color: #ffeaa7; padding: 10px; border-radius: 5px;">
-                📱 카메라를 사용할 수 없습니다.<br>
-                블루투스 바코드 스캐너로 스캔하거나 직접 입력해주세요.
+        // 에러 타입별 맞춤 메시지 및 해결방안
+        let errorTitle = '❌ 카메라를 시작할 수 없습니다.';
+        let errorDetails = '';
+        let solutions = [];
+        
+        // 에러 타입 분석
+        if (error.message === 'PERMISSION_DENIED' || error.name === 'NotAllowedError') {
+            errorTitle = '📷 카메라 권한이 거부되었습니다.';
+            errorDetails = '바코드 스캔을 위해 카메라 권한이 필요합니다.';
+            solutions = [
+                '🔒 브라우저 주소창의 자물쇠 아이콘을 클릭하세요',
+                '📷 카메라 권한을 "허용"으로 변경하세요',
+                '🔄 페이지를 새로고침한 후 다시 시도하세요'
+            ];
+        } else if (error.message === 'MEDIA_NOT_SUPPORTED') {
+            errorTitle = '📱 이 브라우저는 카메라를 지원하지 않습니다.';
+            errorDetails = '최신 브라우저를 사용하시거나 다른 방법을 이용해주세요.';
+            solutions = [
+                '🌐 Chrome, Safari, Firefox 등 최신 브라우저 사용',
+                '📱 모바일 앱으로 접속해보세요'
+            ];
+        } else if (error.message === 'LIBRARY_NOT_LOADED') {
+            errorTitle = '📚 바코드 라이브러리 로딩 실패';
+            errorDetails = '네트워크 연결을 확인해주세요.';
+            solutions = [
+                '🌐 인터넷 연결 상태를 확인하세요',
+                '🔄 페이지를 새로고침해주세요'
+            ];
+        } else if (error.name === 'NotFoundError') {
+            errorTitle = '📷 카메라를 찾을 수 없습니다.';
+            errorDetails = '카메라가 다른 앱에서 사용 중이거나 연결되지 않았습니다.';
+            solutions = [
+                '📱 다른 카메라 앱을 종료해주세요',
+                '🔌 외장 카메라 연결을 확인하세요'
+            ];
+        } else if (error.name === 'NotReadableError') {
+            errorTitle = '📷 카메라가 사용 중입니다.';
+            errorDetails = '다른 앱이나 탭에서 카메라를 사용하고 있습니다.';
+            solutions = [
+                '📱 다른 카메라 앱을 모두 종료하세요',
+                '🌐 다른 브라우저 탭을 확인하세요'
+            ];
+        } else if (error.name === 'OverconstrainedError') {
+            errorTitle = '📷 카메라 설정 오류';
+            errorDetails = '요청한 카메라 설정을 지원하지 않습니다.';
+            solutions = [
+                '📱 다른 해상도로 다시 시도해보세요'
+            ];
+        }
+        
+        // 상세 에러 메시지 표시
+        const resultDiv = document.getElementById('barcodeResult');
+        resultDiv.innerHTML = `
+            <div style="color: #721c24; background: #f8d7da; border: 1px solid #f5c6cb; padding: 20px; border-radius: 8px; margin: 15px 0; line-height: 1.6;">
+                <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">
+                    ${errorTitle}
+                </div>
+                <div style="margin-bottom: 15px; font-size: 14px;">
+                    ${errorDetails}
+                </div>
+                
+                ${solutions.length > 0 ? `
+                <div style="margin-bottom: 15px;">
+                    <strong style="font-size: 16px;">🔧 해결 방법:</strong><br>
+                    ${solutions.map(s => `<div style="margin: 8px 0; padding-left: 10px;">• ${s}</div>`).join('')}
+                </div>
+                ` : ''}
+                
+                <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin-top: 15px;">
+                    <strong style="color: #856404; font-size: 16px;">🔄 대안 방법:</strong><br>
+                    <div style="color: #856404; margin-top: 8px;">
+                        • 📡 <strong>블루투스 바코드 스캐너</strong> 사용<br>
+                        • ⌨️ <strong>시리얼번호 직접 입력</strong><br>
+                        • 💻 <strong>PC에서 접속</strong>하여 사용<br>
+                        • 📱 <strong>다른 브라우저</strong>로 시도
+                    </div>
+                </div>
             </div>
         `;
-        document.getElementById('barcodeResult').style.display = 'block';
+        resultDiv.style.display = 'block';
+        
+        // 간단한 알림 메시지
+        showMessage(errorTitle + ' 대안 방법을 확인해주세요.', 'error');
     }
 }
 
