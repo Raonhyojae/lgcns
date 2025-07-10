@@ -375,218 +375,109 @@
         gap: 8px !important;
     }
     
-    .receipt-info strong {
-        display: inline-block !important;
-        width: 140px !important;
-        color: #000000 !important;
-        font-weight: 900 !important;
-        background: #e8f4f8 !important;
-        padding: 12px 6px !important;
-        border-radius: 6px !important;
-        flex-shrink: 0 !important;
-        text-align: center !important;
-        border: 1px solid #d1ecf1 !important;
-        font-size: 14px !important;
-    }
-    
-    .receipt-info .value {
-        flex: 1 !important;
-        padding: 10px 20px !important;
-        background: white !important;
-        border: 2px solid #e9ecef !important;
-        border-radius: 6px !important;
-        min-height: 12px !important;
-        line-height: 1.4 !important;
-        display: flex !important;
-        align-items: center !important;
-        font-size: 14px !important;
-        font-weight: 700 !important;
-        color: #000000 !important;
-    }
-    
-    .signature-section {
-        margin-top: 20px !important;
-        border-top: 3px solid #667eea !important;
-        padding-top: 20px !important;
-    }
-    
-    .signature-row {
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center !important;
-        margin-bottom: 15px !important;
-        gap: 20px !important;
-        flex-wrap: nowrap !important;
-    }
-    
-    .signature-group {
-        display: flex !important;
-        flex-direction: row !important;
-        align-items: center !important;
-        gap: 8px !important;
-        flex: none !important;
-        white-space: nowrap !important;
-    }
-    
-    .signature-title {
-        font-size: 16px !important;
-        font-weight: 600 !important;
-        color: #333 !important;
-        white-space: nowrap !important;
-        min-width: 60px !important;
-    }
-    
-    .signature-line {
-        border-bottom: 2px solid #333 !important;
-        width: 120px !important;
-        height: 25px !important;
-        margin-left: 8px !important;
-        flex-shrink: 0 !important;
-    }
-    
-    .cut-line {
-        border-top: 2px dashed #667eea !important;
-        margin: 8mm auto !important;
-        position: relative !important;
-        text-align: center !important;
-        width: 100% !important;
-    }
-    
-    .cut-line::before {
-        content: "✂️ 절취선" !important;
-        position: absolute !important;
-        left: 50% !important;
-        top: -10px !important;
-        transform: translateX(-50%) !important;
-        background: white !important;
-        padding: 0 15px !important;
-        color: #667eea !important;
-        font-weight: 600 !important;
-        font-size: 12px !important;
-    }
 }
- 
-  
-    .receipt-info p {
-        margin-bottom: 12px !important;
-        font-size: 14px !important;
-        display: flex !important;
-        align-items: flex-start !important;
-        gap: 8px !important;
-    }
-    
-    .receipt-info strong {
-        display: inline-block !important;
-        width: 140px !important;
-        color: #000000 !important;
-        font-weight: 900 !important;
-        background: #e8f4f8 !important;
-        padding: 12px 6px !important;
-        border-radius: 6px !important;
-        flex-shrink: 0 !important;
-        text-align: center !important;
-        border: 1px solid #d1ecf1 !important;
-        font-size: 14px !important;
-    }
-    
-    .receipt-info .value {
-        flex: 1 !important;
-        padding: 10px 20px !important;
-        background: white !important;
-        border: 2px solid #e9ecef !important;
-        border-radius: 6px !important;
-        min-height: 12px !important;
-        line-height: 1.4 !important;
-        display: flex !important;
-        align-items: center !important;
-        font-size: 14px !important;
-        font-weight: 700 !important;
-        color: #000000 !important;
-    }
-    
-    .signature-section {
-        margin-top: 20px !important;
-        border-top: 3px solid #667eea !important;
-        padding-top: 20px !important;
-    }
-    
-    .signature-row {
-        display: flex !important;
-        justify-content: left !important;
-        align-items: center !important;
-        margin-bottom: 15px !important;
-        gap: 15px !important;
-    }
-    
-    .signature-row[style*="center"] {
-        justify-content: center !important;
-    }
-    
-    .signature-group {
-        display: flex !important;
-        flex-direction: row !important;
-        align-items: center !important;
-        gap: 8px !important;
-    }
-          
-    .signature-line {
-        border-bottom: 2px solid #333 !important;
-        width: 120px !important;
-        height: 25px !important;
-        margin-left: 8px !important;
-    }
-    
-    .cut-line {
-        border-top: 2px dashed #667eea !important;
-        margin: 8mm auto !important;
-        position: relative !important;
-        text-align: center !important;
-        width: 100% !important;
-    }
-    
-    .cut-line::before {
-        content: "✂️ 절취선" !important;
-        position: absolute !important;
-        left: 50% !important;
-        top: -10px !important;
-        transform: translateX(-50%) !important;
-        background: white !important;
-        padding: 0 15px !important;
-        color: #667eea !important;
-        font-weight: 600 !important;
-        font-size: 12px !important;
-    }
+/* 회수확인서 전용 스타일 */
+.receipt-info p {
+    display: flex;
+    margin-bottom: 15px;
+    align-items: center;
+    font-size: 16px;
+}
 
-    .signature-box.signed {
-        background-size: contain !important;
-        background-repeat: no-repeat !important;
-        background-position: center !important;
-        border: 2px solid #333 !important;
+.receipt-info p strong {
+    width: 140px;
+    font-weight: bold;
+    color: #333;
+    background: #f8f9fa;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-right: none;
+    border-radius: 4px 0 0 4px;
+}
+
+.receipt-info p .value {
+    flex: 1;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 0 4px 4px 0;
+    min-height: 20px;
+}
+
+.signature-section {
+    margin-top: 40px;
+    padding: 20px;
+    border-top: 2px solid #eee;
+}
+
+.signature-row {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    align-items: flex-end;
+    margin-top: 20px;
+}
+
+.signature-group {
+    display: flex;
+    align-items: flex-end;
+    gap: 15px;
+}
+
+.signature-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+.signature-line {
+    width: 150px;
+    height: 1px;
+    border-bottom: 2px solid #333;
+    margin: 0 10px;
+    align-self: flex-end;
+    margin-bottom: 2px;
+}
+
+.cut-line {
+        border-top: 2px dashed #667eea !important;
+        margin: 1mm auto 8mm auto !important;
+        position: relative !important;
+        text-align: center !important;
+        width: 100% !important;
     }
-   
-    /* 페이지 여백 설정 */
-    @page {
-        size: A4 !important;
-        margin: 10mm !important;
+    
+    .cut-line::before {
+        content: "✂️ 절취선" !important;
+        position: absolute !important;
+        left: 50% !important;
+        top: -10px !important;
+        transform: translateX(-50%) !important;
+        background: white !important;
+        padding: 0 15px !important;
+        color: #667eea !important;
+        font-weight: 600 !important;
+        font-size: 12px !important;
     }
 }
+
       /* 서명 모달 스타일 - 여기부터 추가 */
       .signature-modal {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: rgba(0, 0, 0, 0.8);
-          z-index: 10000;
-          display: none;
-          justify-content: center;
-          align-items: center;
-      }
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 10000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
 
-      .signature-modal.show {
-          display: flex;
-      }
+.signature-modal.show {
+    display: flex !important;
+}
 
       .signature-popup {
           background: white;
@@ -679,7 +570,7 @@
       .signature-box {
           border: 2px solid #333;
           height: 80px;
-          width: 200px;
+          width: 250px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -727,6 +618,46 @@
           .signature-box.signed::after {
               display: none !important;
           }
+/* 인쇄용 서명 정렬 최적화 */
+@media print {
+    .signature-section {
+        margin-top: 30px !important;
+        padding: 15px !important;
+        border-top: 2px solid #eee !important;
+    }
+    
+    .signature-row {
+        display: flex !important;
+        justify-content: center !important;
+        gap: 50px !important;
+        align-items: flex-end !important;
+        margin-top: 15px !important;
+        width: 100% !important;
+    }
+    
+    .signature-group {
+        display: flex !important;
+        align-items: flex-end !important;
+        gap: 10px !important;
+        white-space: nowrap !important;
+    }
+    
+    .signature-title {
+        font-size: 14px !important;
+        font-weight: bold !important;
+        color: #333 !important;
+        margin-bottom: 2px !important;
+    }
+    
+    .signature-line {
+        width: 100px !important;
+        height: 1px !important;
+        border-bottom: 2px solid #333 !important;
+        margin: 0 5px !important;
+        margin-bottom: 2px !important;
+        flex-shrink: 0 !important;
+    }
+}
       }
       /* 서명 모달 스타일 - 여기까지 추가 */
   </style>
@@ -1045,17 +976,17 @@ function generateReceipt() {
                             <p><strong>회수일자</strong><span class="value">${currentDate}</span></p>
                         </div>
                         <div class="signature-section">
-                            <div class="signature-row" style="justify-content: center !important;">
-                                <div class="signature-group">
-                                    <span class="signature-title">회수자 :</span>
-                                    <div class="signature-line"></div>
-                                    <span style="margin-left: 10px;">인</span>
-                                </div>
-                                <div class="signature-group" style="margin-left: 10px;">
-                                    <span class="signature-title">반납자 :</span>
-                                    <div class="signature-line"></div>
-                                    <span style="margin-left: 10px;">인</span>
-                                </div>
+                <div class="signature-row" style="justify-content: center !important;">
+                    <div class="signature-group">
+                        <span class="signature-title">회수자 :</span>
+                        <div class="signature-line"></div>
+                        <span style="margin-left: 10px;">인</span>
+                    </div>
+                    <div class="signature-group" style="margin-left: 10px;">
+                        <span class="signature-title">반납자 :</span>
+                        <div class="signature-line"></div>
+                        <span style="margin-left: 10px;">인</span>
+                    </div>
                             </div>
                         </div>
                     </div>
@@ -1089,11 +1020,11 @@ function generateReceipt() {
             const row = excelData[i];
             if (row && row.length > 0 && row.some(cell => cell)) {
                 // 엑셀 데이터에서 필요한 정보 추출
-                const contractNumber = row[0] || 'C000164353-1';
-                const productName = row[1] || '16MR70';
-                const serialNumber = row[2] || '시리얼번호를 입력하세요';
-                const userName = row[3] || '임재학 책임';
-                const deliveryLocation = row[4] || 'LG CNS';
+                const contractNumber = row[0] ? String(row[0]).trim() : '';
+const productName = row[1] ? String(row[1]).trim() : '';
+const serialNumber = row[2] ? String(row[2]).trim() : '';
+const userName = row[3] ? String(row[3]).trim() : '';
+const deliveryLocation = row[4] ? String(row[4]).trim() : '';
                 
                 receiptsHTML += `
                     <div class="receipt-page">
@@ -1189,76 +1120,76 @@ function generateReceipt() {
       let currentSignatureType = '';
       let currentSignatureIndex = 0;
 
-      // 서명 모달 열기
-      function openSignatureModal(type, index) {
-          currentSignatureType = type;
-          currentSignatureIndex = index;
-          
-          // 동적으로 모달 생성
-          createSignatureModal();
-          
-          const modal = document.getElementById('signatureModal');
-          const title = document.getElementById('signatureTitle');
-          
-          title.textContent = type === 'user' ? '사용자 서명' : '대리인 서명';
-          
-          modal.classList.add('show');
-          
-          // 캔버스 초기화
-          canvas = document.getElementById('signatureCanvas');
-          ctx = canvas.getContext('2d');
-          
-          // 캔버스 설정
-          ctx.strokeStyle = '#000';
-          ctx.lineWidth = 2;
-          ctx.lineCap = 'round';
-          ctx.lineJoin = 'round';
-          
-          // 이벤트 리스너 추가
-          setupCanvasEvents();
-          
-          // 기존 서명이 있다면 표시
-          const existingSignature = getExistingSignature(type, index);
-          if (existingSignature) {
-              const img = new Image();
-              img.onload = function() {
-                  ctx.clearRect(0, 0, canvas.width, canvas.height);
-                  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-              };
-              img.src = existingSignature;
-          } else {
-              clearSignature();
-          }
-      }
-
-      // 서명 모달 동적 생성
-      function createSignatureModal() {
-          // 기존 모달이 있다면 제거
-          const existingModal = document.getElementById('signatureModal');
-          if (existingModal) {
-              existingModal.remove();
-          }
-          
-          // 새 모달 생성
-          const modalHTML = `
-              <div class="signature-modal" id="signatureModal">
-                  <div class="signature-popup">
-                      <div class="signature-header">
-                          <h3 id="signatureTitle">서명하기</h3>
-                          <p>아래 영역에 손가락이나 펜으로 서명해주세요</p>
-                      </div>
-                      <canvas id="signatureCanvas" class="signature-canvas" width="500" height="200"></canvas>
-                      <div class="signature-controls">
-                          <button class="signature-btn clear" onclick="clearSignature()">🗑️ 지우기</button>
-                          <button class="signature-btn save" onclick="saveSignature()">✅ 저장</button>
-                          <button class="signature-btn cancel" onclick="closeSignatureModal()">❌ 취소</button>
-                      </div>
-                  </div>
-              </div>
-          `;
-          
-          document.body.insertAdjacentHTML('beforeend', modalHTML);
-      }
+// 서명 모달 열기
+function openSignatureModal(type, index) {
+    console.log('🖊️ 서명 모달 열기:', type, index);
+    
+    currentSignatureType = type;
+    currentSignatureIndex = index;
+    
+    // 기존 모달 제거
+    const existingModal = document.getElementById('signatureModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // 새 모달 생성
+    const modalHTML = `
+        <div class="signature-modal show" id="signatureModal">
+            <div class="signature-popup">
+                <div class="signature-header">
+                    <h3 id="signatureTitle">${type === 'user' ? '사용자 서명' : '대리인 서명'}</h3>
+                    <p>아래 영역에 손가락이나 펜으로 서명해주세요</p>
+                </div>
+                <canvas id="signatureCanvas" class="signature-canvas" width="500" height="200"></canvas>
+                <div class="signature-controls">
+                    <button class="signature-btn clear" onclick="clearSignature()">🗑️ 지우기</button>
+                    <button class="signature-btn save" onclick="saveSignature()">✅ 저장</button>
+                    <button class="signature-btn cancel" onclick="closeSignatureModal()">❌ 취소</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // 잠시 대기 후 캔버스 초기화 (DOM 생성 완료 대기)
+    setTimeout(() => {
+        // 캔버스 초기화
+        canvas = document.getElementById('signatureCanvas');
+        if (!canvas) {
+            console.error('❌ 캔버스를 찾을 수 없습니다');
+            return;
+        }
+        
+        ctx = canvas.getContext('2d');
+        
+        // 캔버스 설정
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        
+        // 이벤트 리스너 추가
+        setupCanvasEvents();
+        
+        // 캔버스 초기화
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // 기존 서명이 있다면 표시
+        const existingSignature = getExistingSignature(type, index);
+        if (existingSignature) {
+            const img = new Image();
+            img.onload = function() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            };
+            img.src = existingSignature;
+        }
+        
+        console.log('✅ 서명 모달 생성 완료');
+    }, 100);
+}
 
       // 서명 모달 닫기
       function closeSignatureModal() {
@@ -1276,80 +1207,113 @@ function generateReceipt() {
           }
       }
 
-      // 캔버스 이벤트 설정
-      function setupCanvasEvents() {
-          // 마우스 이벤트
-          canvas.addEventListener('mousedown', startDrawing);
-          canvas.addEventListener('mousemove', draw);
-          canvas.addEventListener('mouseup', stopDrawing);
-          canvas.addEventListener('mouseout', stopDrawing);
-          
-          // 터치 이벤트
-          canvas.addEventListener('touchstart', handleTouch);
-          canvas.addEventListener('touchmove', handleTouch);
-          canvas.addEventListener('touchend', stopDrawing);
-      }
+// 캔버스 이벤트 설정
+function setupCanvasEvents() {
+    if (!canvas) {
+        console.error('❌ 캔버스가 없습니다');
+        return;
+    }
+    
+    console.log('🎯 캔버스 이벤트 설정 중...');
+    
+    // 기존 이벤트 리스너 제거
+    removeCanvasEvents();
+    
+    // 마우스 이벤트
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseout', stopDrawing);
+    
+    // 터치 이벤트 (passive: false로 preventDefault 허용)
+    canvas.addEventListener('touchstart', handleTouch, { passive: false });
+    canvas.addEventListener('touchmove', handleTouch, { passive: false });
+    canvas.addEventListener('touchend', handleTouch, { passive: false });
+    
+    console.log('✅ 캔버스 이벤트 설정 완료');
+}
 
-      // 캔버스 이벤트 제거
-      function removeCanvasEvents() {
-          if (canvas) {
-              canvas.removeEventListener('mousedown', startDrawing);
-              canvas.removeEventListener('mousemove', draw);
-              canvas.removeEventListener('mouseup', stopDrawing);
-              canvas.removeEventListener('mouseout', stopDrawing);
-              canvas.removeEventListener('touchstart', handleTouch);
-              canvas.removeEventListener('touchmove', handleTouch);
-              canvas.removeEventListener('touchend', stopDrawing);
-          }
-      }
+// 캔버스 이벤트 제거
+function removeCanvasEvents() {
+    if (canvas) {
+        canvas.removeEventListener('mousedown', startDrawing);
+        canvas.removeEventListener('mousemove', draw);
+        canvas.removeEventListener('mouseup', stopDrawing);
+        canvas.removeEventListener('mouseout', stopDrawing);
+        canvas.removeEventListener('touchstart', handleTouch);
+        canvas.removeEventListener('touchmove', handleTouch);
+        canvas.removeEventListener('touchend', handleTouch);
+    }
+}
 
-      // 그리기 시작
-      function startDrawing(e) {
-          isDrawing = true;
-          const rect = canvas.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
-          
-          ctx.beginPath();
-          ctx.moveTo(x, y);
-      }
+// 그리기 시작
+function startDrawing(e) {
+    isDrawing = true;
+    const rect = canvas.getBoundingClientRect();
+    
+    let x, y;
+    if (e.touches && e.touches[0]) {
+        // 터치 이벤트
+        x = e.touches[0].clientX - rect.left;
+        y = e.touches[0].clientY - rect.top;
+    } else {
+        // 마우스 이벤트
+        x = e.clientX - rect.left;
+        y = e.clientY - rect.top;
+    }
+    
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+}
 
-      // 그리기
-      function draw(e) {
-          if (!isDrawing) return;
-          
-          const rect = canvas.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
-          
-          ctx.lineTo(x, y);
-          ctx.stroke();
-      }
+// 그리기
+function draw(e) {
+    if (!isDrawing) return;
+    e.preventDefault();
+    
+    const rect = canvas.getBoundingClientRect();
+    
+    let x, y;
+    if (e.touches && e.touches[0]) {
+        // 터치 이벤트
+        x = e.touches[0].clientX - rect.left;
+        y = e.touches[0].clientY - rect.top;
+    } else {
+        // 마우스 이벤트
+        x = e.clientX - rect.left;
+        y = e.clientY - rect.top;
+    }
+    
+    ctx.lineTo(x, y);
+    ctx.stroke();
+}
 
-      // 그리기 중지
-      function stopDrawing() {
-          isDrawing = false;
-          ctx.beginPath();
-      }
+// 그리기 중지
+function stopDrawing(e) {
+    if (isDrawing) {
+        isDrawing = false;
+        ctx.beginPath();
+    }
+}
 
-      // 터치 이벤트 처리
-      function handleTouch(e) {
-          e.preventDefault();
-          const touch = e.touches[0];
-          const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' : 
-                                           e.type === 'touchmove' ? 'mousemove' : 'mouseup', {
-              clientX: touch.clientX,
-              clientY: touch.clientY
-          });
-          canvas.dispatchEvent(mouseEvent);
-      }
+// 터치 이벤트 처리
+function handleTouch(e) {
+    e.preventDefault();
+    
+    if (e.type === 'touchstart') {
+        startDrawing(e);
+    } else if (e.type === 'touchmove') {
+        draw(e);
+    } else if (e.type === 'touchend') {
+        stopDrawing(e);
+    }
+}
 
-      // 서명 지우기
-      function clearSignature() {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          ctx.fillStyle = 'white';
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-      }
+      // 서명 지우기 (개선된 버전)
+function clearSignature() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // fillRect 제거 - 투명 배경 유지
+}
 
       // 서명 저장
       function saveSignature() {
