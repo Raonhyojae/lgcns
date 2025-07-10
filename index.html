@@ -173,6 +173,54 @@
           left: 0;
       }
 
+
+.file-message {
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.6;
+    text-align: center;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: none;
+    color: white !important;
+}
+
+.file-message.success {
+    background: rgba(40, 167, 69, 0.8);
+    border: 2px solid #28a745;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.file-message.error {
+    background: rgba(220, 53, 69, 0.8);
+    border: 2px solid #dc3545;
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+}
+
+.file-message.info {
+    background: rgba(23, 162, 184, 0.8);
+    border: 2px solid #17a2b8;
+    box-shadow: 0 4px 15px rgba(23, 162, 184, 0.3);
+}
+
+.file-message.show {
+    display: block;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
       .controls { 
           display: flex; 
           justify-content: center; 
@@ -343,30 +391,36 @@
         width: 100% !important;
     }
     
+    /* 🔥 핵심 수정: 한 페이지에 2개씩 인쇄 */
     .receipt-page {
         width: 210mm !important;
-        height: 297mm !important;
+        height: 148.5mm !important; /* A4 세로의 절반 높이 */
         margin: 0 !important;
-        padding: 15mm !important;
+        padding: 10mm !important;
         box-shadow: none !important;
         border-radius: 0 !important;
         background: white !important;
         display: flex !important;
         flex-direction: column !important;
         justify-content: flex-start !important;
-        page-break-after: always !important;
         page-break-inside: avoid !important;
+        page-break-after: auto !important;
     }
 
-    .receipt-page:last-child,
-    .receipt-page.last-page {
+    /* 2개마다 페이지 나누기 */
+    .receipt-page:nth-child(2n) {
+        page-break-after: always !important;
+    }
+
+    /* 마지막 페이지는 페이지 나누기 안함 */
+    .receipt-page:last-child {
         page-break-after: avoid !important;
     }
     
     .receipt {
         border: 2px solid #333 !important;
-        padding: 15px !important;
-        margin-bottom: 8mm !important;
+        padding: 12px !important;
+        margin-bottom: 5mm !important;
         border-radius: 8px !important;
         background: #fafafa !important;
         width: 100% !important;
@@ -377,27 +431,154 @@
     
     .receipt h2 {
         text-align: center !important;
-        margin-bottom: 20px !important;
-        font-size: 20px !important;
+        margin-bottom: 15px !important;
+        font-size: 18px !important;
         color: #333 !important;
-        border-bottom: 3px solid #667eea !important;
-        padding-bottom: 10px !important;
+        border-bottom: 2px solid #667eea !important;
+        padding-bottom: 8px !important;
         font-weight: 700 !important;
     }
     
     .receipt-info {
-        margin-bottom: 25px !important;
+        margin-bottom: 20px !important;
         flex: 1 !important;
     }
     
-    .receipt-info p {
-        margin-bottom: 12px !important;
-        font-size: 14px !important;
+    .receipt-info > div {
+        margin-bottom: 8px !important;
+        font-size: 12px !important;
         display: flex !important;
-        align-items: flex-start !important;
-        gap: 8px !important;
+        align-items: center !important;
     }
     
+    .receipt-info strong {
+        width: 100px !important;
+        font-size: 12px !important;
+        font-weight: bold !important;
+        color: #333 !important;
+        background: #f8f9fa !important;
+        padding: 8px 10px !important;
+        border: 1px solid #ddd !important;
+        border-right: none !important;
+        border-radius: 4px 0 0 4px !important;
+    }
+    
+    .receipt-info .value {
+        flex: 1 !important;
+        padding: 8px 10px !important;
+        border: 1px solid #ddd !important;
+        background: white !important;
+        border-radius: 0 4px 4px 0 !important;
+        font-size: 12px !important;
+    }
+    
+    .signature-section {
+        margin-top: 15px !important;
+        padding: 10px !important;
+        border-top: 1px solid #eee !important;
+        display: flex !important;
+        justify-content: center !important;
+        gap: 30px !important;
+    }
+    
+    .signature-section > div {
+        text-align: center !important;
+    }
+    
+    .signature-section > div > div:first-child {
+        font-size: 14px !important;
+        font-weight: bold !important;
+        margin-bottom: 10px !important;
+    }
+    
+    .signature-box {
+        width: 120px !important;
+        height: 40px !important;
+        border: 2px solid #333 !important;
+        background: white !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 12px !important;
+        color: #999 !important;
+    }
+    
+    .signature-box.signed {
+        background-size: contain !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+        color: transparent !important;
+    }
+    
+    .cut-line {
+        border-top: 2px dashed #667eea !important;
+        margin: 3mm auto !important;
+        position: relative !important;
+        text-align: center !important;
+        width: 100% !important;
+    }
+    
+    .cut-line::before {
+        content: "✂️ 절취선" !important;
+        position: absolute !important;
+        left: 50% !important;
+        top: -8px !important;
+        transform: translateX(-50%) !important;
+        background: white !important;
+        padding: 0 10px !important;
+        color: #667eea !important;
+        font-weight: 600 !important;
+        font-size: 10px !important;
+    }
+    
+    /* 회수확인서용 서명 스타일 */
+    .signature-row {
+        display: flex !important;
+        justify-content: center !important;
+        gap: 40px !important;
+        align-items: flex-end !important;
+        margin-top: 15px !important;
+    }
+    
+    .signature-group {
+        display: flex !important;
+        align-items: flex-end !important;
+        gap: 10px !important;
+    }
+    
+    .signature-title {
+        font-size: 12px !important;
+        font-weight: bold !important;
+        color: #333 !important;
+        margin-bottom: 2px !important;
+    }
+    
+    .signature-line {
+        width: 80px !important;
+        height: 1px !important;
+        border-bottom: 2px solid #333 !important;
+        margin: 0 5px !important;
+        margin-bottom: 2px !important;
+    }
+    
+    /* 바코드 관련 숨기기 */
+    .barcode-modal, .signature-modal {
+        display: none !important;
+    }
+    
+    /* 시리얼번호 입력 필드 스타일 */
+    .serial-input {
+        flex: 1 !important;
+        padding: 8px 10px !important;
+        border: 1px solid #ddd !important;
+        background: white !important;
+        border-radius: 0 4px 4px 0 !important;
+        font-size: 12px !important;
+    }
+    
+    .barcode-scan-btn {
+        display: none !important;
+    }
 }
 
 .cut-line {
@@ -829,14 +1010,16 @@
           <div class="upload-info">엑셀 파일을 선택하면 자동으로 처리됩니다.</div>
           
           <div class="file-rules">
-              <h4>📋 파일 업로드 규칙</h4>
-              <ul id="fileRules">
-                  <li>회수확인서 모드: "회수" 관련 파일만 업로드 가능</li>
-                  <li>인수확인서 모드: "납품" 또는 "인수" 관련 파일만 업로드 가능</li>
-                  <li>파일명에 해당 키워드가 포함되어야 합니다</li>
-              </ul>
-          </div>
-      </div>
+    <h4>📋 파일 업로드 규칙</h4>
+    <ul id="fileRules">
+        <li>회수확인서 모드: "회수" 관련 파일만 업로드 가능</li>
+        <li>인수확인서 모드: "납품" 또는 "인수" 관련 파일만 업로드 가능</li>
+        <li>파일명에 해당 키워드가 포함되어야 합니다</li>
+    </ul>
+    
+    <!-- 파일 메시지 박스 추가 -->
+    <div class="file-message" id="fileMessage"></div>
+</div>
 
       <div class="controls">
           <div class="date-display">
@@ -892,7 +1075,7 @@
           
           // 초기화 완료 알림
           setTimeout(() => {
-              showToast('✅ 시스템이 준비되었습니다!');
+              showMessage('✅ 시스템이 준비되었습니다!', 'success');
           }, 500);
       });
 
@@ -998,7 +1181,7 @@
           document.getElementById('fileInput').value = '';
 
           const modeText = mode === 'receipt' ? '회수확인서' : '인수확인서';
-          showToast(`${modeText} 모드로 전환되었습니다.`);
+          showMessage(`${modeText} 모드로 전환되었습니다.`, 'info');
       }
 
       // 파일 업로드 처리
@@ -1012,7 +1195,7 @@
           
           // 파일 타입 검증
           if (!file.name.match(/\.(xlsx|xls)$/i)) {
-              showToast('❌ 엑셀 파일(.xlsx, .xls)만 업로드 가능합니다.', 'error');
+              showMessage('❌ 엑셀 파일(.xlsx, .xls)만 업로드 가능합니다.', 'error');
               event.target.value = '';
               return;
           }
@@ -1020,12 +1203,12 @@
           // 파일명 검증
           const validation = validateFileName(file.name);
           if (!validation.valid) {
-              showToast(validation.message, 'error');
+              showMessage(validation.message, 'error');
               event.target.value = '';
               return;
           }
 
-          showToast('📄 파일 검증 완료. 읽는 중...', 'success');
+          showMessage('📄 파일 검증 완료. 읽는 중...', 'info');
 
           const reader = new FileReader();
           
@@ -1040,14 +1223,14 @@
                   
                   if (excelData.length > 1) {
                       const dataRows = excelData.length - 1;
-                      showToast(`✅ 파일 로드 성공! ${dataRows}개 항목`);
+                      showMessage(`✅ 파일 로드 성공! ${dataRows}개 항목`, 'success');
                   } else {
-                      showToast('❌ 데이터가 없습니다.', 'error');
+                      showMessage('❌ 데이터가 없습니다.', 'error');
                   }
                   
               } catch (error) {
                   console.error('파일 파싱 오류:', error);
-                  showToast('❌ 파일 읽기 오류', 'error');
+                  showMessage('❌ 파일 읽기 오류', 'error');
               }
           };
           
@@ -1057,7 +1240,7 @@
 // 확인서 생성 함수에서 인수확인서 부분만 수정
 function generateReceipt() {
     if (excelData.length === 0) {
-        showToast('❌ 먼저 엑셀 파일을 업로드해주세요.', 'error');
+        showMessage('❌ 먼저 엑셀 파일을 업로드해주세요.', 'error');
         return;
     }
 
@@ -1289,35 +1472,69 @@ function generateReceipt() {
     }
 
     receiptWrapper.classList.add('show');
-    showToast('✅ 확인서가 생성되었습니다!');
+    showMessage('✅ 확인서가 생성되었습니다!', 'success');
 }
 
       // 인쇄하기
       function printReceipt() {
           if (!document.getElementById('receiptWrapper').classList.contains('show')) {
-              showToast('❌ 먼저 확인서를 생성해주세요.', 'error');
+              showMessage('❌ 먼저 확인서를 생성해주세요.', 'error');
               return;
           }
           
           window.print();
       }
 
-      // 토스트 메시지 표시
-      function showToast(message, type = 'success') {
-          const toast = document.getElementById('toast');
-          toast.textContent = message;
-          toast.className = `toast ${type}`;
-          
-          // 표시
-          setTimeout(() => {
-              toast.classList.add('show');
-          }, 100);
-          
-          // 숨기기
-          setTimeout(() => {
-              toast.classList.remove('show');
-          }, 3000);
-      }
+// 파일 규칙 박스 내 메시지 표시
+function showFileMessage(message, type = 'success') {
+    const messageBox = document.getElementById('fileMessage');
+    const rulesElement = document.getElementById('fileRules');
+    
+    // 규칙 숨기기
+    rulesElement.style.display = 'none';
+    
+    // 메시지 설정 및 표시
+    messageBox.textContent = message;
+    messageBox.className = `file-message ${type} show`;
+    
+    // 3초 후 규칙 다시 표시
+    setTimeout(() => {
+        messageBox.classList.remove('show');
+        setTimeout(() => {
+            messageBox.style.display = 'none';
+            rulesElement.style.display = 'block';
+        }, 300);
+    }, 3000);
+}
+
+// 통합 메시지 표시 함수 (토스트 대신 파일 메시지 사용)
+function showMessage(message, type = 'success') {
+    // 파일 메시지 박스가 있으면 파일 메시지로, 없으면 토스트로
+    const fileMessageBox = document.getElementById('fileMessage');
+    if (fileMessageBox) {
+        showFileMessage(message, type);
+    } else {
+        showToast(message, type);
+    }
+}
+
+// 기존 토스트 함수는 백업용으로 유지
+function showToast(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = `toast ${type}`;
+    
+    // 표시
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 100);
+    
+    // 숨기기
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000);
+}
+
       // 서명 관련 변수
       let canvas, ctx;
       let isDrawing = false;
@@ -1525,7 +1742,7 @@ function clearSignature() {
           
           // 빈 서명 체크
           if (isCanvasEmpty()) {
-              showToast('❌ 서명을 입력해주세요.', 'error');
+              showMessage('❌ 서명을 입력해주세요.', 'error');
               return;
           }
           
@@ -1540,7 +1757,8 @@ function clearSignature() {
           // 서명 데이터 저장
           saveSignatureData(currentSignatureType, currentSignatureIndex, signatureData);
           
-          showToast('✅ 서명이 저장되었습니다.');
+          showMessage('✅ 서명이 저장되었습니다.', 'success');
+
           closeSignatureModal();
       }
 
@@ -1639,7 +1857,7 @@ async function startBarcodeScanner() {
                 }
             });
             
-            showToast('📷 카메라가 시작되었습니다. 바코드를 비춰주세요.');
+            showMessage('📷 카메라가 시작되었습니다. 바코드를 비춰주세요.', 'info');
             
         } else {
             throw new Error('바코드 라이브러리를 불러올 수 없습니다.');
@@ -1647,7 +1865,7 @@ async function startBarcodeScanner() {
         
     } catch (error) {
         console.error('카메라 시작 오류:', error);
-        showToast('❌ 카메라를 시작할 수 없습니다. 블루투스 스캐너를 사용해주세요.', 'error');
+        showMessage('❌ 카메라를 시작할 수 없습니다. 블루투스 스캐너를 사용해주세요.', 'error');
         
         // 카메라 실패 시 키보드 입력만 활성화
         document.getElementById('barcodeResult').innerHTML = `
@@ -1672,7 +1890,7 @@ function handleBarcodeResult(scannedText) {
         resultDiv.style.background = '#d4edda';
         resultDiv.style.color = '#155724';
         
-        showToast('✅ 바코드 스캔 완료!');
+        showMessage('✅ 바코드 스캔 완료!', 'success');
         
         // 2초 후 모달 자동 닫기
         setTimeout(() => {
