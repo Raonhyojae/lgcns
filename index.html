@@ -593,14 +593,7 @@
         color: transparent !important;
     }
     
-    .cut-line {
-        border-top: 2px dashed #667eea !important;
-        margin: 3mm auto !important;
-        position: relative !important;
-        text-align: center !important;
-        width: 100% !important;
-    }
-    
+       
     .cut-line::before {
         content: "✂️ 절취선" !important;
         position: absolute !important;
@@ -1398,14 +1391,6 @@ function sanitizeInput(input) {
         return DOMPurify.sanitize(String(input));
     }
     return String(input).replace(/[<>]/g, '');
-}
-
-function formatFileSize(bytes) {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
 function debounce(func, wait) {
