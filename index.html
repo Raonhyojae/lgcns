@@ -4,8 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LG CNS 통합 물품관리 시스템</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://unpkg.com/@zxing/library@latest/umd/index.min.js"></script>
+<style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       
       body { 
@@ -659,8 +660,131 @@
     }
 }
       }
-      /* 서명 모달 스타일 - 여기까지 추가 */
-  </style>
+/* 서명 모달 스타일 - 여기까지 추가 */
+
+/* 바코드 스캔 관련 스타일 */
+.barcode-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.barcode-scan-btn {
+    padding: 8px 12px;
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+.barcode-scan-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+}
+
+.barcode-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 10001;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.barcode-modal.show {
+    display: flex !important;
+}
+
+.barcode-popup {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    max-width: 90vw;
+    max-height: 90vh;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    position: relative;
+}
+
+.barcode-header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #28a745;
+}
+
+.barcode-header h3 {
+    color: #333;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.barcode-video {
+    width: 100%;
+    max-width: 500px;
+    height: 300px;
+    border: 3px solid #28a745;
+    border-radius: 10px;
+    background: #000;
+}
+
+.barcode-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.barcode-btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    min-width: 120px;
+}
+
+.barcode-btn.close {
+    background: #dc3545;
+    color: white;
+}
+
+.barcode-btn.close:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+}
+
+.barcode-result {
+    margin-top: 15px;
+    padding: 10px;
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: 5px;
+    color: #155724;
+    text-align: center;
+    display: none;
+}
+
+@media print {
+    .barcode-modal {
+        display: none !important;
+    }
+}
+</style>
 </head>
 <body>
   <div class="container">
@@ -1014,66 +1138,118 @@ function generateReceipt() {
             `;
         });
         
-    } else if (currentMode === 'delivery') {
-        // 새로운 인수확인서 로직 (이미지 양식에 맞춤)
-        for (let i = 1; i < excelData.length; i++) {
+} else if (currentMode === 'delivery') {
+        // 새로운 인수확인서 로직 - 엑셀 구조에 맞춤
+        console.log('📊 인수확인서 데이터 처리 시작');
+        
+        // 계약번호별로 데이터 그룹핑
+        const groupedByContract = {};
+        
+        // 3행까지는 타이틀이므로 4행부터 처리 (인덱스 3부터)
+        for (let i = 3; i < excelData.length; i++) {
             const row = excelData[i];
-            if (row && row.length > 0 && row.some(cell => cell)) {
-                // 엑셀 데이터에서 필요한 정보 추출
-                const contractNumber = row[0] ? String(row[0]).trim() : '';
-const productName = row[1] ? String(row[1]).trim() : '';
-const serialNumber = row[2] ? String(row[2]).trim() : '';
-const userName = row[3] ? String(row[3]).trim() : '';
-const deliveryLocation = row[4] ? String(row[4]).trim() : '';
-                
-                receiptsHTML += `
-                    <div class="receipt-page">
-                        <div class="receipt" style="border: 3px solid #333; border-radius: 10px; padding: 30px; background: #fafafa;">
-                            <h2 style="text-align: center; font-size: 24px; font-weight: bold; margin-bottom: 30px; border-bottom: 3px solid #333; padding-bottom: 15px;">LG CNS 인수 확인서</h2>
-                            
-                            <div class="receipt-info" style="margin-bottom: 40px;">
-                                <div style="display: flex; margin-bottom: 15px; align-items: center;">
-                                    <strong style="width: 120px; font-size: 16px; font-weight: bold;">계약번호:</strong>
-                                    <span class="value" style="flex: 1; padding: 10px; border: 1px solid #ddd; background: white; border-radius: 4px; font-size: 16px;">${contractNumber}</span>
-                                </div>
-                                
-                                <div style="display: flex; margin-bottom: 15px; align-items: center;">
-                                    <strong style="width: 120px; font-size: 16px; font-weight: bold;">제품명:</strong>
-                                    <span class="value" style="flex: 1; padding: 10px; border: 1px solid #ddd; background: white; border-radius: 4px; font-size: 16px;">${productName}</span>
-                                </div>
-                                
-                                <div style="display: flex; margin-bottom: 15px; align-items: center;">
-                                    <strong style="width: 120px; font-size: 16px; font-weight: bold;">시리얼번호:</strong>
-                                    <span class="value" style="flex: 1; padding: 10px; border: 1px solid #ddd; background: #f8f9fa; border-radius: 4px; font-size: 16px; color: #666;">${serialNumber}</span>
-                                </div>
-                                
-                                <div style="display: flex; margin-bottom: 15px; align-items: center;">
-                                    <strong style="width: 120px; font-size: 16px; font-weight: bold;">사용자:</strong>
-                                    <span class="value" style="flex: 1; padding: 10px; border: 1px solid #ddd; background: white; border-radius: 4px; font-size: 16px;">${userName}</span>
-                                </div>
-                                
-                                <div style="display: flex; margin-bottom: 15px; align-items: center;">
-                                    <strong style="width: 120px; font-size: 16px; font-weight: bold;">인수일자:</strong>
-                                    <span class="value" style="flex: 1; padding: 10px; border: 1px solid #ddd; background: white; border-radius: 4px; font-size: 16px;">${currentDate}</span>
-                                </div>
-                            </div>
-                            
-                            <div class="signature-section" style="display: flex; gap: 30px; margin-top: 40px; justify-content: center;">
-    <div style="text-align: center;">
-        <div style="font-size: 20px; font-weight: bold; margin-bottom: 25px;">사용자</div>
-        <div class="signature-box" onclick="openSignatureModal('user', ${i})" data-type="user" data-index="${i}">서명</div>
-    </div>
-    
-    <div style="text-align: center;">
-        <div style="font-size: 20px; font-weight: bold; margin-bottom: 25px;">대리인</div>
-        <div class="signature-box" onclick="openSignatureModal('agent', ${i})" data-type="agent" data-index="${i}">서명</div>
-    </div>
-</div>
-                        </div>
-                    </div>
-                `;
+            
+            // 빈 행이나 유효하지 않은 행 스킵
+            if (!row || row.length === 0 || !row.some(cell => cell)) {
+                continue;
+            }
+            
+            // A열: 계약번호, B열: 제품명, C열: 수량, H열: 검수자 (인덱스 7)
+            const contractNumber = row[0] ? String(row[0]).trim() : '';
+            const productName = row[1] ? String(row[1]).trim() : '';
+            const quantity = row[2] ? parseInt(String(row[2]).trim()) || 1 : 1;
+            const inspector = row[7] ? String(row[7]).trim() : '';
+            
+            // 계약번호가 없으면 스킵
+            if (!contractNumber) {
+                continue;
+            }
+            
+            // 제품명 포맷팅 (수량이 2 이상이면 "제품명 N대" 형식)
+            let formattedProduct = productName;
+            if (quantity > 1) {
+                formattedProduct = `${productName} ${quantity}대`;
+            }
+            
+            // 계약번호별로 그룹핑
+            if (!groupedByContract[contractNumber]) {
+                groupedByContract[contractNumber] = {
+                    contractNumber: contractNumber,
+                    products: [],
+                    inspector: inspector
+                };
+            }
+            
+            // 중복 제품 체크 후 추가
+            if (!groupedByContract[contractNumber].products.includes(formattedProduct)) {
+                groupedByContract[contractNumber].products.push(formattedProduct);
+            }
+            
+            // 검수자 정보 업데이트 (비어있지 않은 경우)
+            if (inspector && !groupedByContract[contractNumber].inspector) {
+                groupedByContract[contractNumber].inspector = inspector;
             }
         }
+        
+        // 그룹핑된 데이터로 확인서 생성
+        let receiptIndex = 0;
+        Object.keys(groupedByContract).forEach(contractNumber => {
+            const contractData = groupedByContract[contractNumber];
+            const productList = contractData.products.join(', ');
+            
+            receiptsHTML += `
+                <div class="receipt-page">
+                    <div class="receipt" style="border: 3px solid #333; border-radius: 10px; padding: 30px; background: #fafafa;">
+                        <h2 style="text-align: center; font-size: 24px; font-weight: bold; margin-bottom: 30px; border-bottom: 3px solid #333; padding-bottom: 15px;">LG CNS 인수 확인서</h2>
+                        
+                        <div class="receipt-info" style="margin-bottom: 40px;">
+                            <div style="display: flex; margin-bottom: 15px; align-items: center;">
+                                <strong style="width: 120px; font-size: 16px; font-weight: bold;">계약번호:</strong>
+                                <span class="value" style="flex: 1; padding: 10px; border: 1px solid #ddd; background: white; border-radius: 4px; font-size: 16px;">${contractData.contractNumber}</span>
+                            </div>
+                            
+                            <div style="display: flex; margin-bottom: 15px; align-items: center;">
+                                <strong style="width: 120px; font-size: 16px; font-weight: bold;">제품명:</strong>
+                                <span class="value" style="flex: 1; padding: 10px; border: 1px solid #ddd; background: white; border-radius: 4px; font-size: 16px;">${productList}</span>
+                            </div>
+                            
+                            <div style="display: flex; margin-bottom: 15px; align-items: center;">
+                            <strong style="width: 120px; font-size: 16px; font-weight: bold;">시리얼번호:</strong>
+                            <div class="barcode-input-wrapper" style="flex: 1;">
+                            <input type="text" class="serial-input" style="flex: 1; padding: 10px; border: 1px solid #ddd; background: white; border-radius: 4px; font-size: 16px;" placeholder="시리얼번호 입력 또는 스캔">
+                            <button class="barcode-scan-btn" onclick="openBarcodeScanner(this)">📷 스캔</button>
+                            </div>
+                            </div>
+                            
+                            <div style="display: flex; margin-bottom: 15px; align-items: center;">
+                                <strong style="width: 120px; font-size: 16px; font-weight: bold;">사용자:</strong>
+                                <span class="value" style="flex: 1; padding: 10px; border: 1px solid #ddd; background: white; border-radius: 4px; font-size: 16px;">${contractData.inspector}</span>
+                            </div>
+                            
+                            <div style="display: flex; margin-bottom: 15px; align-items: center;">
+                                <strong style="width: 120px; font-size: 16px; font-weight: bold;">인수일자:</strong>
+                                <span class="value" style="flex: 1; padding: 10px; border: 1px solid #ddd; background: white; border-radius: 4px; font-size: 16px;">${currentDate}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="signature-section" style="display: flex; gap: 30px; margin-top: 40px; justify-content: center;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 20px; font-weight: bold; margin-bottom: 25px;">사용자</div>
+                                <div class="signature-box" onclick="openSignatureModal('user', ${receiptIndex})" data-type="user" data-index="${receiptIndex}">서명</div>
+                            </div>
+                            
+                            <div style="text-align: center;">
+                                <div style="font-size: 20px; font-weight: bold; margin-bottom: 25px;">대리인</div>
+                                <div class="signature-box" onclick="openSignatureModal('agent', ${receiptIndex})" data-type="agent" data-index="${receiptIndex}">서명</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            receiptIndex++;
+        });
+        
+        console.log(`✅ ${Object.keys(groupedByContract).length}개 계약번호 처리 완료`);
     }
     
     receiptContainer.innerHTML = receiptsHTML;
@@ -1364,6 +1540,184 @@ function clearSignature() {
           const key = `signature_${type}_${index}`;
           return localStorage.getItem(key);
       }
+// 바코드 스캔 관련 변수
+let barcodeReader = null;
+let currentStream = null;
+let currentSerialInput = null;
+
+// 바코드 스캐너 열기
+function openBarcodeScanner(button) {
+    // 현재 입력 필드 찾기
+    currentSerialInput = button.parentElement.querySelector('.serial-input');
+    
+    // 기존 모달 제거
+    const existingModal = document.getElementById('barcodeModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // 새 모달 생성
+    const modalHTML = `
+        <div class="barcode-modal show" id="barcodeModal">
+            <div class="barcode-popup">
+                <div class="barcode-header">
+                    <h3>📷 바코드 스캔</h3>
+                    <p>바코드를 카메라에 비춰주세요</p>
+                </div>
+                <video id="barcodeVideo" class="barcode-video" autoplay playsinline></video>
+                <div class="barcode-result" id="barcodeResult"></div>
+                <div class="barcode-controls">
+                    <button class="barcode-btn close" onclick="closeBarcodeScanner()">❌ 닫기</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // 카메라 시작
+    startBarcodeScanner();
+    
+    // 키보드 입력 리스너 (블루투스 스캐너용)
+    document.addEventListener('keydown', handleBarcodeKeyboard);
+}
+
+// 바코드 스캐너 시작
+async function startBarcodeScanner() {
+    try {
+        // ZXing 라이브러리 초기화
+        if (typeof ZXing !== 'undefined') {
+            barcodeReader = new ZXing.BrowserMultiFormatReader();
+            
+            const videoElement = document.getElementById('barcodeVideo');
+            
+            // 카메라 스트림 시작
+            const constraints = {
+                video: {
+                    facingMode: 'environment', // 후면 카메라 우선
+                    width: { ideal: 640 },
+                    height: { ideal: 480 }
+                }
+            };
+            
+            currentStream = await navigator.mediaDevices.getUserMedia(constraints);
+            videoElement.srcObject = currentStream;
+            
+            // 바코드 스캔 시작
+            barcodeReader.decodeFromVideoDevice(null, 'barcodeVideo', (result, err) => {
+                if (result) {
+                    const scannedText = result.getText();
+                    handleBarcodeResult(scannedText);
+                }
+            });
+            
+            showToast('📷 카메라가 시작되었습니다. 바코드를 비춰주세요.');
+            
+        } else {
+            throw new Error('바코드 라이브러리를 불러올 수 없습니다.');
+        }
+        
+    } catch (error) {
+        console.error('카메라 시작 오류:', error);
+        showToast('❌ 카메라를 시작할 수 없습니다. 블루투스 스캐너를 사용해주세요.', 'error');
+        
+        // 카메라 실패 시 키보드 입력만 활성화
+        document.getElementById('barcodeResult').innerHTML = `
+            <div style="color: #856404; background: #fff3cd; border-color: #ffeaa7; padding: 10px; border-radius: 5px;">
+                📱 카메라를 사용할 수 없습니다.<br>
+                블루투스 바코드 스캐너로 스캔하거나 직접 입력해주세요.
+            </div>
+        `;
+        document.getElementById('barcodeResult').style.display = 'block';
+    }
+}
+
+// 바코드 결과 처리
+function handleBarcodeResult(scannedText) {
+    if (currentSerialInput && scannedText.trim()) {
+        currentSerialInput.value = scannedText.trim();
+        
+        // 결과 표시
+        const resultDiv = document.getElementById('barcodeResult');
+        resultDiv.innerHTML = `✅ 스캔 완료: ${scannedText}`;
+        resultDiv.style.display = 'block';
+        resultDiv.style.background = '#d4edda';
+        resultDiv.style.color = '#155724';
+        
+        showToast('✅ 바코드 스캔 완료!');
+        
+        // 2초 후 모달 자동 닫기
+        setTimeout(() => {
+            closeBarcodeScanner();
+        }, 2000);
+    }
+}
+
+// 키보드 입력 처리 (블루투스 스캐너용)
+let barcodeBuffer = '';
+let barcodeTimeout = null;
+
+function handleBarcodeKeyboard(event) {
+    // 모달이 열려있을 때만 처리
+    if (!document.getElementById('barcodeModal')) return;
+    
+    // Enter 키로 바코드 입력 완료
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        if (barcodeBuffer.trim()) {
+            handleBarcodeResult(barcodeBuffer);
+            barcodeBuffer = '';
+        }
+        return;
+    }
+    
+    // 일반 문자 입력
+    if (event.key.length === 1) {
+        event.preventDefault();
+        barcodeBuffer += event.key;
+        
+        // 타임아웃 리셋 (빠른 연속 입력 감지)
+        clearTimeout(barcodeTimeout);
+        barcodeTimeout = setTimeout(() => {
+            if (barcodeBuffer.trim()) {
+                handleBarcodeResult(barcodeBuffer);
+                barcodeBuffer = '';
+            }
+        }, 100); // 100ms 대기
+    }
+}
+
+// 바코드 스캐너 닫기
+function closeBarcodeScanner() {
+    // 카메라 스트림 정지
+    if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+        currentStream = null;
+    }
+    
+    // 바코드 리더 정지
+    if (barcodeReader) {
+        barcodeReader.reset();
+        barcodeReader = null;
+    }
+    
+    // 키보드 이벤트 리스너 제거
+    document.removeEventListener('keydown', handleBarcodeKeyboard);
+    
+    // 모달 제거
+    const modal = document.getElementById('barcodeModal');
+    if (modal) {
+        modal.classList.remove('show');
+        setTimeout(() => {
+            modal.remove();
+        }, 300);
+    }
+    
+    // 변수 초기화
+    currentSerialInput = null;
+    barcodeBuffer = '';
+    clearTimeout(barcodeTimeout);
+}
   </script>
 </body>
 </html>
