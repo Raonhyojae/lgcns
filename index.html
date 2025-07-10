@@ -376,6 +376,28 @@
     }
     
 }
+
+.cut-line {
+    border-top: 2px dashed #667eea !important;
+    margin: 1mm auto 8mm auto !important;
+    position: relative !important;
+    text-align: center !important;
+    width: 100% !important;
+}
+    
+    .cut-line::before {
+        content: "✂️ 절취선" !important;
+        position: absolute !important;
+        left: 50% !important;
+        top: -10px !important;
+        transform: translateX(-50%) !important;
+        background: white !important;
+        padding: 0 15px !important;
+        color: #667eea !important;
+        font-weight: 600 !important;
+        font-size: 12px !important;
+    }
+
 /* 회수확인서 전용 스타일 */
 .receipt-info p {
     display: flex;
@@ -437,28 +459,6 @@
     margin: 0 10px;
     align-self: flex-end;
     margin-bottom: 2px;
-}
-
-.cut-line {
-        border-top: 2px dashed #667eea !important;
-        margin: 1mm auto 8mm auto !important;
-        position: relative !important;
-        text-align: center !important;
-        width: 100% !important;
-    }
-    
-    .cut-line::before {
-        content: "✂️ 절취선" !important;
-        position: absolute !important;
-        left: 50% !important;
-        top: -10px !important;
-        transform: translateX(-50%) !important;
-        background: white !important;
-        padding: 0 15px !important;
-        color: #667eea !important;
-        font-weight: 600 !important;
-        font-size: 12px !important;
-    }
 }
 
       /* 서명 모달 스타일 - 여기부터 추가 */
