@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # Synology NAS 설정
-NAS_USER="yourusername"
-NAS_IP="192.168.x.x"
-NAS_PATH="/volume1/web/project"
+NAS_USER="master"
+NAS_IP="192.168.0.100"
+NAS_PATH="/volume1/web/lgcns"
 
 # 로컬 프로젝트 경로
-PROJECT_DIR="/path/to/project"
+PROJECT_DIR="C:/Users/chpark/program_rebuild/lgcns"
 
 # NAS로 파일 복사
 echo "🚀 Synology NAS에 파일 복사 시작..."
