@@ -1,12 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <!-- ✅ 추가할 코드 -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#8b5cf6">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="LG CNS 물품관리">
-<meta name="theme-color" content="#000000">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
   <title>LG CNS 통합 물품관리 시스템</title>
@@ -1319,7 +1313,9 @@
         }
 
 </style>
-<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js" 
+        integrity="sha512-1T1u2KWaFtAuEKRBOlrGf1zEO9RRqqmdC3zWnL21bXqj/lHuJaC6Ct09M8GIFT4hqXqHbaLe2atBu+Pej4Luig==" 
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
   <div class="container">
@@ -1385,19 +1381,6 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    // Service Worker 등록
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(registration => {
-        console.log('SW registered: ', registration);
-      })
-      .catch(registrationError => {
-        console.log('SW registration failed: ', registrationError);
-      });
-  });
-}
-
       // 전역 변수
       let currentMode = 'receipt';
       let excelData = [];
@@ -2555,16 +2538,6 @@ function closeBarcodeScanner() {
     barcodeBuffer = '';
     clearTimeout(barcodeTimeout);
 }
-  </script>
-  <script>
-    // Service Worker 등록
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js')
-          .then(reg => console.log('SW registered'))
-          .catch(err => console.log('SW registration failed'));
-      });
-    }
   </script>
 </body>
 </html>
