@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # GitHub 저장소 URL
-REPO_URL="https://github.com/yourusername/yourrepository.git"
+REPO_URL="https://github.com/raonhyojae/lgcns.git"
 
 # 로컬 프로젝트 경로
-PROJECT_DIR="/path/to/project"
+PROJECT_DIR="C:/Users/chpark/program_rebuild"
 
 # GitHub에 푸시
 echo "🚀 GitHub에 코드 푸시 시작..."
