@@ -4,7 +4,7 @@
 REPO_URL="https://github.com/raonhyojae/lgcns.git"
 
 # 로컬 프로젝트 경로
-PROJECT_DIR="C:/Users/chpark/program_rebuild"
+PROJECT_DIR="C:/Users/chpark/program_rebuild/lgcns"
 
 # GitHub에 푸시
 echo "🚀 GitHub에 코드 푸시 시작..."
