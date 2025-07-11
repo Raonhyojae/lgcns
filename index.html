@@ -7,6 +7,56 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://unpkg.com/@zxing/library@latest/umd/index.min.js"></script>
 <style>
+
+/* 인수확인서 전용 스타일 */
+.receipt-delivery {
+    border: 3px solid #333;
+    border-radius: 10px;
+    padding: 30px;
+    background: #fafafa;
+}
+
+.receipt-delivery h2 {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    border-bottom: 3px solid #333;
+    padding-bottom: 15px;
+}
+
+.receipt-info-delivery {
+    margin-bottom: 40px;
+}
+
+.receipt-info-delivery > div {
+    display: flex;
+    margin-bottom: 15px;
+    align-items: center;
+}
+
+.receipt-info-delivery strong {
+    width: 120px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.receipt-info-delivery .value {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.signature-section-delivery {
+    display: flex;
+    gap: 30px;
+    margin-top: 40px;
+    justify-content: center;
+}
+
 :root {
     --primary-color: #667eea;
     --secondary-color: #764ba2;
@@ -898,6 +948,18 @@
           .signature-box.signed::after {
               display: none !important;
           }
+@media print {
+    .signature-box.signed {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        background-size: contain !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+        color: transparent !important;
+    }
+}
+
+
 /* 인쇄용 서명 정렬 최적화 */
 @media print {
     .signature-section {
@@ -1405,12 +1467,23 @@ function debounce(func, wait) {
     };
 }
 
-// 메모리 정리 함수
+// 기존
 function cleanupMemory() {
     if (window.gc) {
         window.gc();
     }
 }
+
+// 엑셀 데이터 초기화 시 호출 부분
+excelData = [];
+cleanupMemory();
+
+// 개선 예시 (단순히 참조 해제)
+function cleanupMemory() {
+    excelData = null;
+    // 필요하면 다른 전역 변수들도 해제
+}
+
 
 // 권한 체크 함수들
 async function checkCameraPermission() {
@@ -1582,13 +1655,19 @@ function formatFileSize(bytes) {
       }
 
       // 파일 업로드 처리
-      function handleFileUpload(event) {
-    console.log('📁 파일 업로드 시작');
+function resetUploadUI() {
+    const progressContainer = document.querySelector('.progress-container');
+    const loadingSpinner = document.querySelector('.loading-spinner');
+    const fileInput = document.getElementById('fileInput');
     
+    if (fileInput) fileInput.value = '';
+    if (progressContainer) progressContainer.style.display = 'none';
+    if (loadingSpinner) loadingSpinner.style.display = 'none';
+}
+
+function handleFileUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
-
-    console.log('선택된 파일:', file.name);
     
     // 파일 크기 제한 (50MB)
     const maxSize = 50 * 1024 * 1024;
@@ -1609,12 +1688,14 @@ function formatFileSize(bytes) {
     }
     
     // 파일명 검증
-    const validation = validateFileName(file.name);
+   const debouncedValidateFileName = debounce((fileName) => {
+    const validation = validateFileName(fileName);
     if (!validation.valid) {
         showMessage(validation.message, 'error');
-        event.target.value = '';
-        return;
+    } else {
+        showMessage(validation.message, 'success');
     }
+}, 300);
 
     showMessage('📄 파일 검증 완료. 읽는 중...', 'info');
     
@@ -1728,7 +1809,7 @@ function generateReceipt() {
         for (let i = 5; i < excelData.length; i++) {
             const row = excelData[i];
             if (row && row.length > 0) {
-                const assetNumber = row[0] ? String(row[0]).trim() : '';
+                const assetNumber = row[0] ? sanitizeInput(String(row[0]).trim()) : '';
                 
                 if (!assetNumber || !/^\d/.test(assetNumber)) {
                     continue;
@@ -1880,54 +1961,54 @@ function generateReceipt() {
             const productList = contractData.products.join(', ');
             
             receiptsHTML += `
-                <div class="receipt-page">
-                    <div class="receipt" style="border: 3px solid #333; border-radius: 10px; padding: 30px; background: #fafafa;">
-                        <h2 style="text-align: center; font-size: 24px; font-weight: bold; margin-bottom: 30px; border-bottom: 3px solid #333; padding-bottom: 15px;">LG CNS 인수 확인서</h2>
-                        
-                        <div class="receipt-info" style="margin-bottom: 40px;">
-                            <div style="display: flex; margin-bottom: 15px; align-items: center;">
-                                <strong style="width: 120px; font-size: 16px; font-weight: bold;">계약번호:</strong>
-                                <span class="value" style="flex: 1; padding: 10px; border: 1px solid #ddd; background: white; border-radius: 4px; font-size: 16px;">${contractData.contractNumber}</span>
-                            </div>
-                            
-                            <div style="display: flex; margin-bottom: 15px; align-items: center;">
-                                <strong style="width: 120px; font-size: 16px; font-weight: bold;">제품명:</strong>
-                                <span class="value" style="flex: 1; padding: 10px; border: 1px solid #ddd; background: white; border-radius: 4px; font-size: 16px;">${productList}</span>
-                            </div>
-                            
-                            <div style="display: flex; margin-bottom: 15px; align-items: center;">
-                            <strong style="width: 120px; font-size: 16px; font-weight: bold;">시리얼번호:</strong>
-                            <div class="barcode-input-wrapper" style="flex: 1;">
-                            <input type="text" class="serial-input" style="flex: 1; padding: 10px; border: 1px solid #ddd; background: white; border-radius: 4px; font-size: 16px;" placeholder="시리얼번호 입력 또는 스캔">
-                            <button class="barcode-scan-btn" onclick="openBarcodeScanner(this)">📷 스캔</button>
-                            </div>
-                            </div>
-                            
-                            <div style="display: flex; margin-bottom: 15px; align-items: center;">
-                                <strong style="width: 120px; font-size: 16px; font-weight: bold;">사용자:</strong>
-                                <span class="value" style="flex: 1; padding: 10px; border: 1px solid #ddd; background: white; border-radius: 4px; font-size: 16px;">${contractData.inspector}</span>
-                            </div>
-                            
-                            <div style="display: flex; margin-bottom: 15px; align-items: center;">
-                                <strong style="width: 120px; font-size: 16px; font-weight: bold;">인수일자:</strong>
-                                <span class="value" style="flex: 1; padding: 10px; border: 1px solid #ddd; background: white; border-radius: 4px; font-size: 16px;">${currentDate}</span>
-                            </div>
-                        </div>
-                        
-                        <div class="signature-section" style="display: flex; gap: 30px; margin-top: 40px; justify-content: center;">
-                            <div style="text-align: center;">
-                                <div style="font-size: 20px; font-weight: bold; margin-bottom: 25px;">사용자</div>
-                                <div class="signature-box" onclick="openSignatureModal('user', ${receiptIndex})" data-type="user" data-index="${receiptIndex}">서명</div>
-                            </div>
-                            
-                            <div style="text-align: center;">
-                                <div style="font-size: 20px; font-weight: bold; margin-bottom: 25px;">대리인</div>
-                                <div class="signature-box" onclick="openSignatureModal('agent', ${receiptIndex})" data-type="agent" data-index="${receiptIndex}">서명</div>
-                            </div>
-                        </div>
+    <div class="receipt-page">
+        <div class="receipt receipt-delivery">
+            <h2>LG CNS 인수 확인서</h2>
+            
+            <div class="receipt-info receipt-info-delivery">
+                <div>
+                    <strong>계약번호:</strong>
+                    <span class="value">${contractData.contractNumber}</span>
+                </div>
+                
+                <div>
+                    <strong>제품명:</strong>
+                    <span class="value">${productList}</span>
+                </div>
+                
+                <div>
+                    <strong>시리얼번호:</strong>
+                    <div class="barcode-input-wrapper" style="flex: 1;">
+                        <input type="text" class="serial-input" placeholder="시리얼번호 입력 또는 스캔">
+                        <button class="barcode-scan-btn" onclick="openBarcodeScanner(this)">📷 스캔</button>
                     </div>
                 </div>
-            `;
+                
+                <div>
+                    <strong>사용자:</strong>
+                    <span class="value">${contractData.inspector}</span>
+                </div>
+                
+                <div>
+                    <strong>인수일자:</strong>
+                    <span class="value">${currentDate}</span>
+                </div>
+            </div>
+            
+            <div class="signature-section signature-section-delivery">
+                <div style="text-align: center;">
+                    <div style="font-size: 20px; font-weight: bold; margin-bottom: 25px;">사용자</div>
+                    <div class="signature-box" onclick="openSignatureModal('user', ${receiptIndex})" data-type="user" data-index="${receiptIndex}">서명</div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <div style="font-size: 20px; font-weight: bold; margin-bottom: 25px;">대리인</div>
+                    <div class="signature-box" onclick="openSignatureModal('agent', ${receiptIndex})" data-type="agent" data-index="${receiptIndex}">서명</div>
+                </div>
+            </div>
+        </div>
+    </div>
+`;
             receiptIndex++;
         });
         
@@ -2014,7 +2095,10 @@ function showToast(message, type = 'success') {
 
 // 서명 모달 열기
 function openSignatureModal(type, index) {
-    console.log('🖊️ 서명 모달 열기:', type, index);
+    if (document.getElementById('signatureModal')) {
+        console.log('서명 모달이 이미 열려있음.');
+        return;
+    }
     
     currentSignatureType = type;
     currentSignatureIndex = index;
@@ -2220,9 +2304,8 @@ function clearSignature() {
           // 서명 박스에 적용
           const signatureBox = document.querySelector(`[data-type="${currentSignatureType}"][data-index="${currentSignatureIndex}"]`);
           if (signatureBox) {
-              signatureBox.style.backgroundImage = `url(${signatureData})`;
-              signatureBox.classList.add('signed');
-              signatureBox.textContent = '';
+              signatureBox.innerHTML = `<img src="${signatureData}" alt="서명" style="width: 100%; height: 100%; object-fit: contain; border-radius: 5px;">`;
+signatureBox.classList.add('signed');
           }
           
           // 서명 데이터 저장
@@ -2295,8 +2378,11 @@ function openBarcodeScanner(button) {
     // 카메라 시작
     startBarcodeScanner();
     
-    // 키보드 입력 리스너 (블루투스 스캐너용)
-    document.addEventListener('keydown', handleBarcodeKeyboard);
+    // 키보드 입력 리스너 (블루투스 스캐너용) 중복 등록 방지
+    if (!openBarcodeScanner.listenerAdded) {
+        document.addEventListener('keydown', handleBarcodeKeyboard);
+        openBarcodeScanner.listenerAdded = true;
+    }
 }
 
 // 바코드 스캐너 시작
@@ -2521,8 +2607,11 @@ function closeBarcodeScanner() {
         barcodeReader = null;
     }
     
-    // 키보드 이벤트 리스너 제거
-    document.removeEventListener('keydown', handleBarcodeKeyboard);
+    // 키보드 이벤트 리스너 제거 및 플래그 초기화
+    if (openBarcodeScanner.listenerAdded) {
+        document.removeEventListener('keydown', handleBarcodeKeyboard);
+        openBarcodeScanner.listenerAdded = false;
+    }
     
     // 모달 제거
     const modal = document.getElementById('barcodeModal');
