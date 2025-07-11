@@ -1,19 +1,19 @@
-const CACHE_NAME = 'lgcns-pwa-v1';
+const CACHE_NAME = 'lgcns-pwa-v1.0';
 const urlsToCache = [
-  '/',
-  '/css/main.css',
-  '/js/main.js',
-  '/assets/icons/icon-192.png',
-  '/assets/icons/icon-512.png'
+  './',
+  './index.html',
+  './css/style.css',
+  './js/main.js',
+  './assets/icon-192.png',
+  './assets/icon-512.png'
 ];
 
-// 설치 이벤트
+// 설치
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => {
-        return cache.addAll(urlsToCache);
-      })
+      .then(cache => cache.addAll(urlsToCache))
+      .catch(err => console.log('Cache failed:', err))
   );
 });
 
@@ -21,8 +21,7 @@ self.addEventListener('install', event => {
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
-      .then(response => {
-        return response || fetch(event.request);
-      })
+      .then(response => response || fetch(event.request))
+      .catch(err => console.log('Fetch failed:', err))
   );
 });
